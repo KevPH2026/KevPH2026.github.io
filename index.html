@@ -50,13 +50,6 @@
     -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     background-clip: text;
   }
-  .headline .swap { display: inline-block; position: relative; }
-  .headline .swap .w {
-    display: inline-block; transition: opacity .5s, transform .5s, filter .5s;
-  }
-  .headline .swap .w.on  { opacity: 1; transform: translateY(0); filter: blur(0); }
-  .headline .swap .w.off { opacity: 0; transform: translateY(10px); filter: blur(4px); position: absolute; left: 0; }
-  .headline .swap .w.init { opacity: 0; transform: translateY(-10px); filter: blur(4px); }
   .subtitle { font-size: 14px; font-weight: 400; color: rgba(255,255,255,0.4); letter-spacing: 0.06em; }
 
   /* ── PIPELINE ── */
@@ -185,11 +178,7 @@
   <div class="page-section">
     <div class="tag">Focus · AI‑Native &amp; Agent Products</div>
     <div class="headline">
-      <span class="hl-glow">I don't just create<br>
-      <span class="swap" id="swap">
-        <span class="w on" id="wordCode">code</span>
-        <span class="w init" id="wordProducts">products</span>
-      </span>.</span>
+      <span class="hl-glow">I don't just create<br>products.</span>
     </div>
     <div class="subtitle">Business plan before the first commit. Always.</div>
   </div>
@@ -359,16 +348,6 @@ function draw() {
   requestAnimationFrame(draw);
 }
 draw();
-
-// ═══════════════════════════════════════════
-// WORD SWAP
-// ═══════════════════════════════════════════
-const swapCode = document.getElementById('wordCode');
-const swapProducts = document.getElementById('wordProducts');
-setTimeout(() => {
-  swapCode.classList.add('off'); swapCode.classList.remove('on');
-  swapProducts.classList.remove('init'); swapProducts.classList.add('on');
-}, 1800);
 
 // ═══════════════════════════════════════════
 // PIPELINE ANIMATION
