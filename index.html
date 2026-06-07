@@ -6,251 +6,225 @@
 <title>K — Products, not code.</title>
 <style>
   :root {
-    --bg: #050507;
-    --blue: #7798f5;
-    --blue-dark: #273856;
-    --gray: #404042;
-    --text: #c6c6c8;
-    --white: #f0f0f0;
+    --bg: #07080a;
+    --text: #e8eaed;
+    --dim: #5f6368;
+    --blue: #669df6;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   body {
     background: var(--bg);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+    height: 100vh; overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
     color: var(--text);
-    font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', monospace;
-    height: 100vh; width: 100vw;
-    overflow: hidden;
-    font-size: 14px;
-    line-height: 1.5;
   }
 
-  /* ── SCANLINE OVERLAY ── */
-  body::after {
-    content: '';
-    position: fixed; inset: 0;
-    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.15) 2px, rgba(0,0,0,0.15) 3px);
-    pointer-events: none; z-index: 999; opacity: 0.5;
-  }
-
-  /* ── AMBIENT BLUE GLOW ── */
-  .ambient {
-    position: fixed; pointer-events: none; z-index: 0;
-    width: 50vw; height: 50vw; border-radius: 50%;
-    filter: blur(160px); opacity: 0.06;
-    background: var(--blue);
-  }
-  .ambient.a1 { top: -15vw; right: -10vw; }
-  .ambient.a2 { bottom: -20vw; left: -5vw; opacity: 0.04; width: 40vw; height: 40vw; }
-
-  /* ── GRID ── */
-  .grid-bg {
-    position: fixed; inset: 0; pointer-events: none; z-index: 0; opacity: 0.3;
-    background-image:
-      linear-gradient(rgba(119,152,245,0.06) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(119,152,245,0.06) 1px, transparent 1px);
-    background-size: 60px 60px;
-  }
-  .grid-bg::after {
-    content: '';
-    position: absolute; inset: 0;
-    background-image:
-      linear-gradient(135deg, rgba(119,152,245,0.04) 1px, transparent 1px);
-    background-size: 40px 40px;
-  }
-
-  /* ── MAIN LAYOUT ── */
-  .main {
-    position: relative; z-index: 1;
-    height: 100vh; display: flex; flex-direction: column;
-    justify-content: center;
-    padding: 0 0 0 8vw;
+  .page {
+    width: 100%; max-width: 1100px; padding: 0 80px;
+    display: flex; flex-direction: column; gap: 80px;
   }
 
   /* ── TITLE ── */
-  .title {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    font-weight: 900; font-size: clamp(48px, 10vw, 96px);
-    line-height: 0.95; letter-spacing: -0.03em;
-    color: var(--white);
-    text-transform: uppercase;
-    margin-bottom: 16px;
+  .title-block { position: relative; }
+  .tag {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--blue);
+    margin-bottom: 24px;
+  }
+  .headline {
+    font-size: clamp(44px, 7vw, 80px);
+    font-weight: 800; line-height: 1.02; letter-spacing: -0.025em;
+    max-width: 900px;
+  }
+  .headline .hl {
+    color: var(--blue);
     position: relative;
   }
-  .title .accent {
-    color: var(--blue);
-    text-shadow: 0 0 60px rgba(119,152,245,0.5);
-  }
-  .title::before {
+  .headline .hl::after {
     content: '';
-    position: absolute; top: -20px; left: -40px;
-    width: 120px; height: 4px;
-    background: var(--blue);
-    box-shadow: 0 0 20px rgba(119,152,245,0.6);
+    position: absolute; bottom: -4px; left: 0; right: 0; height: 3px;
+    background: var(--blue); opacity: 0; transition: opacity .3s;
   }
-
-  /* ── SUBTITLE ── */
-  .subtitle {
-    font-size: clamp(13px, 1.8vw, 16px);
-    color: #808080;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    margin-bottom: 48px;
-  }
+  .headline .hl.on::after { opacity: 1; }
 
   /* ── PIPELINE ── */
   .pipeline {
     display: flex; align-items: center; gap: 0;
-    margin-bottom: 48px;
-    flex-wrap: wrap;
   }
-  .p-node {
-    border: 1px solid #333;
-    background: rgba(20,20,22,0.9);
-    padding: 14px 22px;
-    font-size: 15px; font-weight: 600;
-    color: #666;
-    letter-spacing: 0.04em;
-    transition: all 0.5s cubic-bezier(.16,1,.3,1);
-    position: relative;
+  .step {
+    display: flex; align-items: center; gap: 0;
+    opacity: 0.25; transition: opacity .6s;
   }
-  .p-node .dot {
-    display: inline-block; width: 7px; height: 7px;
-    border-radius: 50%; margin-left: 8px;
-    background: #333;
-    transition: all 0.5s;
+  .step.show { opacity: 1; }
+  .step .box {
+    width: 120px; height: 72px;
+    border: 1px solid rgba(255,255,255,0.1);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 6px;
   }
-  .p-arrow {
-    font-size: 20px; color: #333;
-    margin: 0 8px;
-    transition: color 0.5s;
+  .step .box .label {
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    font-size: 13px; font-weight: 700; letter-spacing: 0.06em;
+    color: rgba(255,255,255,0.5); transition: color .6s;
   }
-
-  .p-node.active {
+  .step .box .name {
+    font-size: 10px; font-weight: 500; letter-spacing: 0.08em;
+    text-transform: uppercase; color: rgba(255,255,255,0.2);
+    transition: color .6s;
+  }
+  .step.show .box {
+    border-color: rgba(255,255,255,0.25);
+  }
+  .step.show .box .label { color: #fff; }
+  .step.show .box .name { color: rgba(255,255,255,0.5); }
+  .step.show.current .box {
     border-color: var(--blue);
-    color: #e0e0e0;
-    box-shadow: 0 0 30px rgba(119,152,245,0.25), inset 0 0 20px rgba(119,152,245,0.05);
+    background: rgba(102,157,246,0.06);
+    box-shadow: 0 0 40px rgba(102,157,246,0.12);
   }
-  .p-node.active .dot {
-    background: var(--blue);
-    box-shadow: 0 0 12px rgba(119,152,245,0.8);
-  }
-  .p-arrow.lit { color: var(--blue); text-shadow: 0 0 10px rgba(119,152,245,0.5); }
+  .step.show.current .box .label { color: var(--blue); }
+  .step.show.current .box .name { color: rgba(102,157,246,0.7); }
 
-  /* ── TERMINAL ── */
-  .terminal {
-    background: rgba(39,56,86,0.7);
-    border: 1px solid rgba(119,152,245,0.25);
-    padding: 20px 28px;
-    max-width: 600px;
-    box-shadow: 0 0 40px rgba(119,152,245,0.15), inset 0 0 60px rgba(97,136,227,0.06);
-    color: var(--blue);
-    font-size: 13px;
-    line-height: 1.7;
-    text-shadow: 0 0 6px rgba(119,152,245,0.6);
+  .connector {
+    width: 60px; height: 1px;
+    background: rgba(255,255,255,0.08);
+    margin: 0 12px; transition: all .6s;
     position: relative;
   }
-  .terminal::before {
-    content: 'TERMINAL';
-    position: absolute; top: -10px; left: 16px;
-    font-size: 10px; letter-spacing: 0.12em;
-    color: rgba(119,152,245,0.4);
-    background: #050507; padding: 0 8px;
+  .connector.done {
+    background: rgba(255,255,255,0.25);
   }
-  .terminal .t-dim { color: #6a7fb8; }
-  .terminal .t-bright { color: #a0c0ff; }
+  .connector.done::after {
+    content: '';
+    position: absolute; right: 0; top: -3px;
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--blue);
+    box-shadow: 0 0 8px rgba(102,157,246,0.6);
+  }
 
-  /* ── BOTTOM ── */
-  .bottom {
-    position: fixed; bottom: 0; left: 0; right: 0; z-index: 10;
-    padding: 16px 8vw;
-    border-top: 1px solid #222;
-    display: flex; gap: 24px;
-    font-size: 11px; color: #555;
-    letter-spacing: 0.08em;
+  /* ── STATEMENT ── */
+  .statement {
+    font-size: clamp(16px, 2.2vw, 22px);
+    font-weight: 600; letter-spacing: -0.01em;
+    color: var(--dim); max-width: 650px; line-height: 1.5;
   }
-  .bottom a {
-    color: #666; text-decoration: none; transition: color .3s;
+  .statement span {
+    color: rgba(255,255,255,0.6);
+    transition: color 1.5s;
   }
-  .bottom a:hover { color: var(--blue); }
-  .bottom .spacer { flex: 1; }
+  .statement span.revealed { color: #fff; }
 
-  @media (max-width: 640px) {
-    .main { padding: 0 24px; }
-    .title { font-size: 36px; }
-    .p-node { padding: 10px 14px; font-size: 12px; }
-    .p-arrow { font-size: 14px; margin: 0 4px; }
-    .terminal { max-width: 100%; font-size: 11px; padding: 14px 18px; }
-    .bottom { padding: 12px 24px; gap: 12px; font-size: 10px; }
+  /* ── FOOTER ── */
+  .footer {
+    display: flex; gap: 28px;
+    font-size: 11px; letter-spacing: 0.1em;
+    color: rgba(255,255,255,0.2);
+  }
+  .footer a {
+    color: inherit; text-decoration: none; transition: color .3s;
+    text-transform: uppercase;
+  }
+  .footer a:hover { color: var(--blue); }
+  .footer .loc { margin-left: auto; }
+
+  @media (max-width: 768px) {
+    .page { padding: 0 28px; gap: 48px; }
+    .step .box { width: 68px; height: 52px; }
+    .step .box .label { font-size: 11px; }
+    .step .box .name { font-size: 8px; }
+    .connector { width: 24px; margin: 0 4px; }
+    .footer { gap: 16px; }
   }
 </style>
 </head>
 <body>
 
-<div class="ambient a1"></div>
-<div class="ambient a2"></div>
-<div class="grid-bg"></div>
+<div class="page">
 
-<div class="main">
-  <div class="title">PRODUCTS<br><span class="accent">NOT</span> CODE</div>
-  <div class="subtitle">Every repo is a complete commercial proposition</div>
+  <div class="title-block">
+    <div class="tag">Focus · AI-Native & Agent Products</div>
+    <div class="headline">
+      I don't just<br>create <span class="hl" id="hl">code</span>.
+    </div>
+  </div>
 
   <div class="pipeline" id="pipeline">
-    <div class="p-node" data-id="0">BP<span class="dot"></span></div>
-    <span class="p-arrow">→</span>
-    <div class="p-node" data-id="1">BRD<span class="dot"></span></div>
-    <span class="p-arrow">→</span>
-    <div class="p-node" data-id="2">RESEARCH<span class="dot"></span></div>
-    <span class="p-arrow">→</span>
-    <div class="p-node" data-id="3">{ CODE }<span class="dot"></span></div>
+    <div class="step" data-id="0">
+      <div class="box"><div class="label">BP</div><div class="name">Business Plan</div></div>
+    </div>
+    <div class="connector"><div></div></div>
+    <div class="step" data-id="1">
+      <div class="box"><div class="label">BRD</div><div class="name">Requirements</div></div>
+    </div>
+    <div class="connector"><div></div></div>
+    <div class="step" data-id="2">
+      <div class="box"><div class="label">R</div><div class="name">Research</div></div>
+    </div>
+    <div class="connector"><div></div></div>
+    <div class="step" data-id="3">
+      <div class="box"><div class="label">{ }</div><div class="name">Code</div></div>
+    </div>
   </div>
 
-  <div class="terminal" id="terminal">
-    <div><span class="t-dim">$ pipeline status</span></div>
-    <div style="margin-left:16px"><span class="t-bright">BP</span> <span class="t-dim">············</span> READY</div>
-    <div style="margin-left:16px"><span class="t-bright">BRD</span> <span class="t-dim">···········</span> READY</div>
-    <div style="margin-left:16px"><span class="t-bright">RESEARCH</span> <span class="t-dim">······</span> READY</div>
-    <div style="margin-left:16px"><span class="t-bright">CODE</span> <span class="t-dim">·········</span> BUILDING</div>
-    <div style="margin-top:6px"><span class="t-bright">→ I don't just create code.</span></div>
-    <div><span class="t-bright">→ I create products & business models.</span></div>
+  <div class="statement" id="statement">
+    <span>Every repo ships as a complete commercial proposition.</span><br>
+    <span>I create products & business models.</span>
   </div>
-</div>
 
-<div class="bottom">
-  <a href="https://github.com/KevPH2026">GITHUB</a>
-  <a href="https://kevph2026.github.io/VibeCut/">VIBECUT</a>
-  <a href="mailto:k@superk.ai">EMAIL</a>
-  <span class="spacer"></span>
-  <span>KEVPH · BEIJING</span>
+  <div class="footer">
+    <a href="https://github.com/KevPH2026">GitHub</a>
+    <a href="https://kevph2026.github.io/VibeCut/">VibeCut</a>
+    <a href="mailto:k@superk.ai">Email</a>
+    <span class="loc">KevPH · Beijing</span>
+  </div>
+
 </div>
 
 <script>
-const nodes = document.querySelectorAll('.p-node');
-const arrows = document.querySelectorAll('.p-arrow');
-let idx = -1, dir = 1, pause = false;
+const steps = document.querySelectorAll('.step');
+const connectors = document.querySelectorAll('.connector');
+const hl = document.getElementById('hl');
+const stmt = document.querySelectorAll('#statement span');
+let idx = -1, dir = 1, paused = false;
 
 function tick() {
-  nodes.forEach(n => n.classList.remove('active'));
-  arrows.forEach(a => a.classList.remove('lit'));
+  steps.forEach(s => { s.classList.remove('show','current'); });
+  connectors.forEach(c => c.classList.remove('done'));
 
-  if (idx >= 0 && idx < nodes.length) {
-    nodes[idx].classList.add('active');
-    if (idx > 0) arrows[idx - 1].classList.add('lit');
+  for (let i = 0; i <= idx && i < steps.length; i++) {
+    steps[i].classList.add('show');
+    if (i < idx) connectors[i]?.classList.add('done');
+  }
+  if (idx >= 0 && idx < steps.length) {
+    steps[idx].classList.add('current');
   }
 
-  if (idx === nodes.length - 1 && dir === 1) {
-    pause = true;
-    setTimeout(() => { dir = -1; pause = false; tick(); }, 2000);
+  if (idx === steps.length - 1 && dir === 1) {
+    hl.textContent = 'products';
+    hl.classList.add('on');
+    stmt.forEach(s => s.classList.add('revealed'));
+    paused = true;
+    setTimeout(() => {
+      dir = -1; paused = false;
+      hl.classList.remove('on');
+      stmt.forEach(s => s.classList.remove('revealed'));
+      tick();
+    }, 2500);
     return;
   }
+
   if (idx <= 0 && dir === -1) {
+    hl.textContent = 'code';
     dir = 1; idx = -1;
-    setTimeout(tick, 400);
+    setTimeout(tick, 500);
     return;
   }
 
   idx += dir;
-  setTimeout(tick, dir === 1 ? 400 : 220);
+  setTimeout(tick, dir === 1 ? 450 : 200);
 }
 tick();
 </script>
