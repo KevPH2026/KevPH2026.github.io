@@ -6,7 +6,7 @@
 <title>K — Products, not code.</title>
 <style>
   :root {
-    --bg: #06080a;
+    --bg: #040608;
     --blue: #4da6ff;
     --violet: #a371f7;
     --green: #3fb950;
@@ -16,359 +16,435 @@
 
   body {
     background: var(--bg);
-    color: #8b949e;
     font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'SF Pro Display', sans-serif;
-    overflow-x: hidden;
-    cursor: default;
+    overflow: hidden;
+    height: 100vh; width: 100vw;
+    cursor: crosshair;
   }
 
-  /* ── CONCRETE TEXTURE ── */
-  .texture {
-    position: fixed; inset: 0; z-index: 9998; pointer-events: none; opacity: 0.05;
-    background: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='6' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  /* ── CANVAS ── */
+  canvas { position: fixed; inset: 0; z-index: 1; }
+
+  /* ── TEXTURE OVERLAY ── */
+  .overlay {
+    position: fixed; inset: 0; z-index: 9997; pointer-events: none;
+    opacity: 0.04;
+    background: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.6' numOctaves='5' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  .scan {
+    position: fixed; inset: 0; z-index: 9996; pointer-events: none; opacity: 0.05;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.5) 2px, rgba(0,0,0,0.5) 4px);
+  }
+  .vignette {
+    position: fixed; inset: 0; z-index: 9995; pointer-events: none;
+    background: radial-gradient(ellipse at center, transparent 50%, rgba(4,6,8,0.7) 100%);
   }
 
-  /* ── SCANLINES ── */
-  .scanlines {
-    position: fixed; inset: 0; z-index: 9997; pointer-events: none; opacity: 0.04;
-    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.4) 2px, rgba(0,0,0,0.4) 4px);
-  }
-
-  /* ── GRID FLOOR ── */
-  .grid-floor {
-    position: fixed; bottom: 0; left: 0; right: 0; height: 50vh; z-index: 0;
-    perspective: 500px; overflow: hidden; pointer-events: none;
-  }
-  .grid-floor-inner {
-    position: absolute; bottom: -70%; left: 50%;
-    transform: translateX(-50%) rotateX(55deg);
-    width: 220vw; height: 220vw;
-    background-image:
-      linear-gradient(rgba(77,166,255,0.1) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(77,166,255,0.1) 1px, transparent 1px);
-    background-size: 50px 50px;
-    animation: gridBreath 5s ease-in-out infinite;
-    mask-image: linear-gradient(to top, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.1) 50%, transparent 100%);
-  }
-  @keyframes gridBreath {
-    0%, 100% { opacity: 0.5; }
-    50% { opacity: 0.9; }
-  }
-
-  /* ── PARTICLES ── */
-  .particles { position: fixed; inset: 0; z-index: 1; pointer-events: none; overflow: hidden; }
-  .particle {
-    position: absolute; border-radius: 50%;
-    animation: floatUp linear infinite; opacity: 0;
-  }
-  @keyframes floatUp {
-    0% { transform: translateY(105vh) scale(0); opacity: 0; }
-    15% { opacity: 0.9; }
-    85% { opacity: 0.1; }
-    100% { transform: translateY(-5vh) scale(2); opacity: 0; }
-  }
-
-  /* ── AMBIENT GLOW ── */
-  .ambient {
-    position: fixed; z-index: 0; pointer-events: none;
-    border-radius: 50%; filter: blur(140px); opacity: 0.07;
-  }
-  .ambient.a1 { width: 700px; height: 700px; top: -250px; left: -150px; background: var(--blue); }
-  .ambient.a2 { width: 500px; height: 500px; bottom: -200px; right: -100px; background: var(--violet); }
-
-  /* ── HERO ── */
-  .hero {
-    min-height: 100vh; display: flex; flex-direction: column;
+  /* ── TITLE OVERLAY ── */
+  .title-overlay {
+    position: fixed; inset: 0; z-index: 2;
+    display: flex; flex-direction: column;
     align-items: center; justify-content: center;
-    position: relative; z-index: 2; padding: 60px 24px; text-align: center;
+    pointer-events: none; text-align: center;
+    padding: 24px;
   }
-
-  /* ── TITLE ── */
-  .title-block { position: relative; z-index: 2; margin-bottom: 56px; }
   .title-line {
-    font-size: clamp(34px, 6.5vw, 64px);
-    font-weight: 900;
-    letter-spacing: -0.03em; line-height: 1.08;
-    text-transform: uppercase;
-    color: #c9d1d9;
+    font-size: clamp(32px, 6vw, 60px);
+    font-weight: 900; letter-spacing: -0.02em;
+    line-height: 1.1; text-transform: uppercase;
+    color: rgba(255,255,255,0.9);
+    text-shadow: 0 0 60px rgba(77,166,255,0.3), 0 0 120px rgba(77,166,255,0.1);
   }
-  .title-line .static { color: #c9d1d9; }
-  .title-line .glow-word {
-    background: linear-gradient(135deg, var(--blue), var(--violet));
+  .title-line em {
+    font-style: normal;
+    background: linear-gradient(180deg, #fff 0%, var(--blue) 100%);
     -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    filter: drop-shadow(0 0 20px rgba(77,166,255,0.4));
-    animation: titleGlow 3s ease-in-out infinite;
-  }
-  @keyframes titleGlow {
-    0%, 100% { filter: drop-shadow(0 0 20px rgba(77,166,255,0.4)); }
-    50% { filter: drop-shadow(0 0 40px rgba(163,113,247,0.6)); }
+    filter: drop-shadow(0 0 30px rgba(77,166,255,0.6));
   }
   .title-sub {
-    font-size: clamp(13px, 2.2vw, 17px);
-    color: #484f58; font-weight: 500; margin-top: 14px;
-    letter-spacing: 0.05em; text-transform: uppercase;
+    font-size: clamp(11px, 1.8vw, 14px);
+    color: rgba(255,255,255,0.25); font-weight: 500;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    margin-top: 14px;
   }
-
-  /* ── REVEAL TAGLINE ── */
-  .reveal-tag {
-    font-size: clamp(16px, 3vw, 24px);
-    font-weight: 700; color: transparent;
-    letter-spacing: -0.01em;
-    margin-top: 20px; height: 0; overflow: hidden;
+  .reveal {
+    font-size: clamp(14px, 2.5vw, 20px);
+    font-weight: 700; letter-spacing: -0.01em;
+    margin-top: 16px;
     opacity: 0; transform: translateY(10px);
-    transition: all .8s cubic-bezier(.16,1,.3,1);
+    transition: all 1s cubic-bezier(.16,1,.3,1);
   }
-  .reveal-tag.show {
-    height: auto; opacity: 1; transform: translateY(0);
-    background: linear-gradient(135deg, var(--green), var(--blue));
+  .reveal.on {
+    opacity: 1; transform: translateY(0);
+    background: linear-gradient(90deg, var(--green), var(--blue));
     -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    filter: drop-shadow(0 0 24px rgba(63,185,80,0.4));
+    filter: drop-shadow(0 0 24px rgba(63,185,80,0.5));
   }
-
-  /* ── PIPELINE ── */
-  .pipeline {
-    display: flex; align-items: center; justify-content: center;
-    gap: 0; position: relative; z-index: 2;
-  }
-  .p-node {
-    display: flex; flex-direction: column; align-items: center;
-    width: 120px; position: relative;
-    transition: transform .5s cubic-bezier(.34,1.56,.64,1);
-  }
-  .p-node .box {
-    width: 72px; height: 72px;
-    border: 2px solid rgba(255,255,255,0.06);
-    background: rgba(255,255,255,0.02);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 16px; font-weight: 800; letter-spacing: 0.03em;
-    color: rgba(255,255,255,0.15);
-    position: relative;
-    clip-path: polygon(12% 0%, 100% 0%, 88% 100%, 0% 100%);
-    transition: all .5s cubic-bezier(.16,1,.3,1);
-  }
-  .p-node .box::before {
-    content: '';
-    position: absolute; inset: -3px;
-    clip-path: polygon(12% 0%, 100% 0%, 88% 100%, 0% 100%);
-    background: transparent; z-index: -1; transition: all .5s;
-  }
-  .p-node .glow-ring {
-    position: absolute; inset: -8px;
-    clip-path: polygon(12% 0%, 100% 0%, 88% 100%, 0% 100%);
-    opacity: 0; transition: opacity .5s;
-  }
-  .p-node .label {
-    font-size: 11px; font-weight: 700; text-transform: uppercase;
-    letter-spacing: 0.08em; margin-top: 14px;
-    color: rgba(255,255,255,0.12); transition: color .5s;
-  }
-  .p-node .sublabel {
-    font-size: 9px; color: rgba(255,255,255,0.05);
-    text-transform: uppercase; letter-spacing: 0.06em; margin-top: 3px;
-    transition: color .5s;
-  }
-
-  .p-connector {
-    width: 56px; height: 2px;
-    background: rgba(255,255,255,0.04);
-    position: relative; top: -16px; margin: 0 -6px;
-    transition: all .5s;
-  }
-  .p-connector .fill {
-    position: absolute; inset: 0; transform: scaleX(0); transform-origin: left;
-    transition: transform .5s cubic-bezier(.16,1,.3,1);
-  }
-
-  /* Node colors */
-  .pn-bp .glow-ring { background: rgba(77,166,255,0.2); }
-  .pn-bp .fill { background: linear-gradient(90deg, var(--blue), transparent); }
-  .pn-brd .glow-ring { background: rgba(163,113,247,0.2); }
-  .pn-brd .fill { background: linear-gradient(90deg, var(--violet), transparent); }
-  .pn-r .glow-ring { background: rgba(210,153,29,0.2); }
-  .pn-r .fill { background: linear-gradient(90deg, var(--amber), transparent); }
-  .pn-code .glow-ring { background: rgba(63,185,80,0.2); }
-  .pn-code .fill { background: linear-gradient(90deg, var(--green), transparent); }
-
-  /* Active */
-  .p-node.active { transform: translateY(-4px); }
-  .p-node.active .box { color: #fff; }
-  .p-node.active .glow-ring { opacity: 1; }
-  .p-node.active .label { color: rgba(255,255,255,0.8); }
-  .p-node.active .sublabel { color: rgba(255,255,255,0.35); }
-  .p-node.pn-bp.active .box { border-color: var(--blue); background: rgba(77,166,255,0.12); box-shadow: 0 0 40px rgba(77,166,255,0.35), 0 0 80px rgba(77,166,255,0.1); }
-  .p-node.pn-brd.active .box { border-color: var(--violet); background: rgba(163,113,247,0.12); box-shadow: 0 0 40px rgba(163,113,247,0.35), 0 0 80px rgba(163,113,247,0.1); }
-  .p-node.pn-r.active .box { border-color: var(--amber); background: rgba(210,153,29,0.12); box-shadow: 0 0 40px rgba(210,153,29,0.35), 0 0 80px rgba(210,153,29,0.1); }
-  .p-node.pn-code.active .box { border-color: var(--green); background: rgba(63,185,80,0.12); box-shadow: 0 0 40px rgba(63,185,80,0.35), 0 0 80px rgba(63,185,80,0.1); }
-
-  .p-connector.active .fill { transform: scaleX(1); }
 
   /* ── BOTTOM ── */
   .bottom-bar {
     position: fixed; bottom: 0; left: 0; right: 0; z-index: 10;
-    padding: 14px 24px; display: flex; justify-content: center; gap: 24px;
+    padding: 16px 24px; display: flex; justify-content: center; gap: 28px;
     border-top: 1px solid rgba(255,255,255,0.04);
-    background: rgba(6,8,10,0.85); backdrop-filter: blur(10px);
+    background: linear-gradient(to top, rgba(4,6,8,0.95), transparent);
   }
   .bottom-bar a {
-    font-size: 10px; color: #484f58; text-decoration: none;
-    text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600;
-    transition: color .3s; padding: 4px 0;
+    font-size: 10px; color: rgba(255,255,255,0.25); text-decoration: none;
+    text-transform: uppercase; letter-spacing: 0.12em; font-weight: 600;
+    transition: all .3s; padding: 4px 0;
     border-bottom: 1px solid transparent;
   }
-  .bottom-bar a:hover { color: #c9d1d9; border-bottom-color: var(--blue); }
-  .bottom-bar .loc {
-    font-size: 10px; color: #21262d; letter-spacing: 0.08em; margin-left: 8px;
+  .bottom-bar a:hover { color: #fff; border-bottom-color: var(--blue); }
+  .bottom-bar span {
+    font-size: 10px; color: rgba(255,255,255,0.1); letter-spacing: 0.1em;
   }
-
-  /* ── CORNER ACCENT ── */
-  .corner {
-    position: fixed; z-index: 3; pointer-events: none;
-    width: 80px; height: 80px; opacity: 0.15;
-  }
-  .corner.tl { top: 20px; left: 20px; border-top: 2px solid var(--blue); border-left: 2px solid var(--blue); }
-  .corner.br { bottom: 60px; right: 20px; border-bottom: 2px solid var(--violet); border-right: 2px solid var(--violet); }
 
   @media (max-width: 640px) {
-    .p-node { width: 72px; }
-    .p-node .box { width: 48px; height: 48px; font-size: 12px; }
-    .p-connector { width: 20px; }
-    .bottom-bar { gap: 12px; }
-    .corner { width: 40px; height: 40px; }
+    .bottom-bar { gap: 14px; }
+    .bottom-bar a { font-size: 9px; }
   }
 </style>
 </head>
 <body>
 
-<div class="texture"></div>
-<div class="scanlines"></div>
-<div class="grid-floor"><div class="grid-floor-inner"></div></div>
+<canvas id="c"></canvas>
+<div class="overlay"></div>
+<div class="scan"></div>
+<div class="vignette"></div>
 
-<div class="ambient a1"></div>
-<div class="ambient a2"></div>
-<div class="corner tl"></div>
-<div class="corner br"></div>
-
-<div class="particles" id="particles"></div>
-
-<div class="hero">
-  <div class="title-block">
-    <div class="title-line">
-      <span class="static">I DON'T JUST CREATE</span><br>
-      <span class="glow-word">CODE</span>
-    </div>
-    <div class="title-sub">Every repo is a complete commercial proposition</div>
-    <div class="reveal-tag" id="revealTag">I CREATE PRODUCTS & BUSINESS MODELS</div>
-  </div>
-
-  <div class="pipeline" id="pipeline">
-    <div class="p-node pn-bp" data-id="0">
-      <div class="glow-ring"></div>
-      <div class="box">BP</div>
-      <div class="label">Business Plan</div>
-      <div class="sublabel">Strategy</div>
-    </div>
-    <div class="p-connector"><div class="fill"></div></div>
-    <div class="p-node pn-brd" data-id="1">
-      <div class="glow-ring"></div>
-      <div class="box">BRD</div>
-      <div class="label">Requirements</div>
-      <div class="sublabel">Spec</div>
-    </div>
-    <div class="p-connector"><div class="fill"></div></div>
-    <div class="p-node pn-r" data-id="2">
-      <div class="glow-ring"></div>
-      <div class="box">R</div>
-      <div class="label">Research</div>
-      <div class="sublabel">Deep Dive</div>
-    </div>
-    <div class="p-connector"><div class="fill"></div></div>
-    <div class="p-node pn-code" data-id="3">
-      <div class="glow-ring"></div>
-      <div class="box">{ }</div>
-      <div class="label">Code</div>
-      <div class="sublabel">Execution</div>
-    </div>
-  </div>
+<div class="title-overlay">
+  <div class="title-line">I DON'T JUST CREATE <em>CODE</em></div>
+  <div class="title-sub">Every repo is a complete commercial proposition</div>
+  <div class="reveal" id="reveal">I CREATE PRODUCTS & BUSINESS MODELS</div>
 </div>
 
 <div class="bottom-bar">
   <a href="https://github.com/KevPH2026">GitHub</a>
   <a href="https://kevph2026.github.io/VibeCut/">VibeCut</a>
   <a href="mailto:k@superk.ai">Email</a>
-  <span class="loc">KevPH · Beijing</span>
+  <span>KevPH · Beijing</span>
 </div>
 
 <script>
-const nodes = document.querySelectorAll('.p-node');
-const connectors = document.querySelectorAll('.p-connector');
-const revealTag = document.getElementById('revealTag');
-let activeIndex = -1;
-let direction = 1;
-let paused = false;
+const c = document.getElementById('c');
+const ctx = c.getContext('2d');
+const reveal = document.getElementById('reveal');
+let W, H, t = 0;
 
-function pulse() {
-  if (paused) return;
+function resize() {
+  W = c.width = window.innerWidth;
+  H = c.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', resize);
 
-  nodes.forEach(n => n.classList.remove('active'));
-  connectors.forEach(c => c.classList.remove('active'));
+// ── MOUSE ──
+let mx = W/2, my = H/2;
+document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
 
-  if (activeIndex >= 0 && activeIndex < nodes.length) {
-    nodes[activeIndex].classList.add('active');
-    if (activeIndex > 0) connectors[activeIndex - 1].classList.add('active');
+// ── COLORS ──
+const BLUE = '#4da6ff', VIOLET = '#a371f7', GREEN = '#3fb950', AMBER = '#d2991d';
+const nodeColors = [BLUE, VIOLET, AMBER, GREEN];
+const nodeLabels = ['BP', 'BRD', 'R', '{ }'];
+const nodeNames = ['Business Plan', 'Requirements', 'Research', 'Code'];
+
+// ── GRID ──
+function drawGrid(y0, alpha, scale) {
+  const size = 60 * scale;
+  const w = W * 2, h = H;
+  ctx.strokeStyle = `rgba(77,166,255,${alpha * 0.06})`;
+  ctx.lineWidth = 0.5;
+  ctx.beginPath();
+  for (let x = -(mx - W/2) * 0.1 % size; x < w; x += size) {
+    ctx.moveTo(x, 0); ctx.lineTo(x - w * 0.3, h);
   }
-
-  if (activeIndex === nodes.length - 1) {
-    revealTag.classList.add('show');
-    paused = true;
-    setTimeout(() => {
-      revealTag.classList.remove('show');
-      direction = -1;
-      paused = false;
-      activeIndex = nodes.length - 1;
-      pulse();
-    }, 2000);
-    return;
+  for (let y = y0 % size; y < h; y += size) {
+    ctx.moveTo(0, y); ctx.lineTo(w, y + w * 0.3);
   }
+  ctx.stroke();
 
-  if (activeIndex < 0 && direction === -1) {
-    direction = 1;
-    activeIndex = 0;
-    setTimeout(pulse, 500);
-    return;
-  }
-
-  activeIndex += direction;
-  setTimeout(pulse, direction === 1 ? 350 : 250);
+  // Horizon line
+  ctx.strokeStyle = `rgba(77,166,255,${alpha * 0.12})`;
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(0, y0); ctx.lineTo(W, y0);
+  ctx.stroke();
 }
 
-pulse();
-
-// ── Particles ──
-const pc = document.getElementById('particles');
-for (let i = 0; i < 50; i++) {
-  const p = document.createElement('div');
-  p.className = 'particle';
-  p.style.left = Math.random() * 100 + '%';
-  p.style.animationDuration = (5 + Math.random() * 15) + 's';
-  p.style.animationDelay = Math.random() * 12 + 's';
-  const s = 1 + Math.random() * 2.5;
-  p.style.width = s + 'px'; p.style.height = s + 'px';
-  const colors = ['#4da6ff','#a371f7','#3fb950','#d2991d'];
-  p.style.background = colors[Math.floor(Math.random() * colors.length)];
-  pc.appendChild(p);
+// ── LIGHT BEAMS ──
+function drawBeams(x, y, color, alpha) {
+  const n = 12;
+  for (let i = 0; i < n; i++) {
+    const angle = (i / n) * Math.PI * 2 + t * 0.3;
+    const len = 60 + Math.sin(t * 2 + i) * 30;
+    const grad = ctx.createLinearGradient(x, y, x + Math.cos(angle) * len, y + Math.sin(angle) * len);
+    grad.addColorStop(0, color.replace(')', `,${alpha})`).replace('rgb', 'rgba'));
+    grad.addColorStop(1, 'transparent');
+    ctx.strokeStyle = grad;
+    ctx.lineWidth = 0.5;
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.lineTo(x + Math.cos(angle) * len, y + Math.sin(angle) * len);
+    ctx.stroke();
+  }
 }
 
-// ── Mouse parallax ──
-document.addEventListener('mousemove', e => {
-  const x = (e.clientX / window.innerWidth - 0.5) * 15;
-  const y = (e.clientY / window.innerHeight - 0.5) * 15;
-  document.querySelector('.grid-floor-inner').style.transform =
-    `translateX(calc(-50% + ${x}px)) rotateX(55deg) translateY(${y * 0.5}px)`;
-  document.querySelectorAll('.ambient').forEach((a, i) => {
-    a.style.transform = `translate(${x * (i+1)}px, ${y * (i+1)}px)`;
+// ── NODE ──
+function drawNode(x, y, w, h, color, label, pulse, active) {
+  const a = active ? 1 : 0.15;
+  const glow = active ? 40 : 0;
+
+  // Glow
+  if (active) {
+    const r = Math.max(w, h);
+    const grad = ctx.createRadialGradient(x, y, r * 0.3, x, y, r * 1.5);
+    grad.addColorStop(0, color.replace(')', `,0.3)`).replace('rgb', 'rgba'));
+    grad.addColorStop(0.5, color.replace(')', `,0.08)`).replace('rgb', 'rgba'));
+    grad.addColorStop(1, 'transparent');
+    ctx.fillStyle = grad;
+    ctx.fillRect(x - r * 2, y - r * 2, r * 4, r * 4);
+  }
+
+  // Beam rays from active node
+  if (active) drawBeams(x, y, color, 0.15);
+
+  // Box body
+  ctx.save();
+  ctx.translate(x, y);
+  const skew = 8;
+  ctx.beginPath();
+  ctx.moveTo(-w/2 + skew, -h/2);
+  ctx.lineTo(w/2, -h/2);
+  ctx.lineTo(w/2 - skew, h/2);
+  ctx.lineTo(-w/2, h/2);
+  ctx.closePath();
+
+  // Fill
+  ctx.fillStyle = color.replace(')', `,${0.05 + a * 0.12})`).replace('rgb', 'rgba');
+  ctx.fill();
+
+  // Border
+  ctx.strokeStyle = color.replace(')', `,${0.15 + a * 0.85})`).replace('rgb', 'rgba');
+  ctx.lineWidth = active ? 2 : 1;
+  if (active) {
+    ctx.shadowColor = color;
+    ctx.shadowBlur = glow;
+  }
+  ctx.stroke();
+  ctx.shadowBlur = 0;
+
+  // Inner glow line
+  if (active) {
+    ctx.strokeStyle = `rgba(255,255,255,${0.3})`;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(-w/2 + skew + 4, -h/2 + 2);
+    ctx.lineTo(w/2 - 4, -h/2 + 2);
+    ctx.stroke();
+  }
+
+  // Label
+  ctx.fillStyle = `rgba(255,255,255,${0.15 + a * 0.85})`;
+  ctx.font = `bold ${14 + a * 2}px "SF Mono","Fira Code","Cascadia Code",monospace`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(label, 0, 0);
+
+  ctx.restore();
+}
+
+// ── CONNECTION ──
+function drawConnection(x1, y1, x2, y2, color, progress) {
+  const dx = x2 - x1, dy = y2 - y1;
+  const dist = Math.sqrt(dx * dx + dy * dy);
+
+  // Base line
+  ctx.strokeStyle = `rgba(255,255,255,0.03)`;
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(x1, y1);
+  ctx.lineTo(x2, y2);
+  ctx.stroke();
+
+  // Animated fill
+  if (progress > 0) {
+    const grad = ctx.createLinearGradient(x1, y1, x2, y2);
+    grad.addColorStop(0, color.replace(')', `,${0.6})`).replace('rgb', 'rgba'));
+    grad.addColorStop(1, 'transparent');
+    ctx.strokeStyle = grad;
+    ctx.lineWidth = 2;
+    ctx.shadowColor = color;
+    ctx.shadowBlur = 8;
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x1 + dx * progress, y1 + dy * progress);
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+
+    // Glow dot at progress point
+    const px = x1 + dx * progress;
+    const py = y1 + dy * progress;
+    ctx.fillStyle = color.replace(')', ',0.8)').replace('rgb', 'rgba');
+    ctx.shadowColor = color;
+    ctx.shadowBlur = 12;
+    ctx.beginPath();
+    ctx.arc(px, py, 3, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.shadowBlur = 0;
+  }
+}
+
+// ── PARTICLES ──
+const particles = [];
+for (let i = 0; i < 80; i++) {
+  particles.push({
+    x: Math.random() * W,
+    y: Math.random() * H,
+    vx: (Math.random() - 0.5) * 0.3,
+    vy: -0.2 - Math.random() * 0.6,
+    size: 0.5 + Math.random() * 2,
+    life: Math.random(),
+    maxLife: 0.6 + Math.random() * 0.4,
+    color: nodeColors[Math.floor(Math.random() * 4)]
   });
-});
-</script>
+}
 
+function updateParticles() {
+  for (let p of particles) {
+    p.x += p.vx;
+    p.y += p.vy;
+    p.life += 0.002;
+    if (p.life > p.maxLife || p.y < -20) {
+      p.x = Math.random() * W;
+      p.y = H + 20;
+      p.life = 0;
+      p.color = nodeColors[Math.floor(Math.random() * 4)];
+    }
+  }
+}
+
+function drawParticles() {
+  for (let p of particles) {
+    const alpha = p.life < 0.1 ? p.life * 10 : p.life > p.maxLife - 0.1 ? (p.maxLife - p.life) * 10 : 1;
+    ctx.fillStyle = p.color.replace(')', `,${alpha * 0.7})`).replace('rgb', 'rgba');
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
+// ── PIPELINE STATE ──
+const NODE_W = 80, NODE_H = 60, GAP = 140;
+let activeNode = -1;
+let connProgress = [0, 0, 0];
+let phaseStart = performance.now();
+let cyclePhase = 0; // 0-3 forward, 4 pause, 5-7 backward
+let phaseDuration = 400;
+
+// ── RENDER ──
+function draw(now) {
+  t = now * 0.001;
+
+  // Pipeline animation
+  const elapsed = now - phaseStart;
+  if (cyclePhase <= 3) {
+    // Forward
+    activeNode = Math.min(3, Math.floor(elapsed / phaseDuration));
+    for (let i = 0; i < 3; i++) {
+      if (i < activeNode) connProgress[i] = 1;
+      else if (i === activeNode - 1) connProgress[i] = Math.min(1, (elapsed - (activeNode-1) * phaseDuration) / phaseDuration);
+      else if (i === activeNode && elapsed > activeNode * phaseDuration) {
+        connProgress[i] = Math.min(1, (elapsed - activeNode * phaseDuration) / phaseDuration);
+      }
+    }
+    if (activeNode >= 3 && elapsed > 4 * phaseDuration + 2000) {
+      // Pause done, go backward
+      cyclePhase = 5;
+      phaseStart = now;
+      reveal.classList.remove('on');
+    }
+    if (activeNode === 3 && elapsed > 3 * phaseDuration + 300) {
+      reveal.classList.add('on');
+    }
+  } else {
+    // Backward
+    const bElapsed = elapsed;
+    activeNode = Math.max(-1, 3 - Math.floor(bElapsed / (phaseDuration * 0.6)));
+    for (let i = 2; i >= 0; i--) {
+      if (i > activeNode) connProgress[i] = 0;
+      else if (i === activeNode) {
+        connProgress[i] = Math.max(0, 1 - (bElapsed - (3-activeNode-1) * phaseDuration * 0.6) / (phaseDuration * 0.6));
+      }
+    }
+    if (activeNode < 0 && bElapsed > 4 * phaseDuration * 0.6 + 600) {
+      cyclePhase = 0;
+      phaseStart = now;
+      activeNode = -1;
+      connProgress = [0, 0, 0];
+    }
+  }
+
+  // Clear
+  ctx.clearRect(0, 0, W, H);
+
+  // Background gradient
+  const bgGrad = ctx.createRadialGradient(W/2, H*0.4, 0, W/2, H*0.4, Math.max(W, H));
+  bgGrad.addColorStop(0, '#0a1018');
+  bgGrad.addColorStop(1, '#040608');
+  ctx.fillStyle = bgGrad;
+  ctx.fillRect(0, 0, W, H);
+
+  // Grid layers
+  const baseY = H * 0.62;
+  drawGrid(baseY, 0.4, 0.7);
+  drawGrid(baseY + 60, 0.25, 0.5);
+  drawGrid(baseY + 120, 0.12, 0.3);
+
+  // Horizon glow
+  const hGrad = ctx.createLinearGradient(0, baseY - 40, 0, baseY + 80);
+  hGrad.addColorStop(0, 'transparent');
+  hGrad.addColorStop(0.5, 'rgba(77,166,255,0.04)');
+  hGrad.addColorStop(1, 'transparent');
+  ctx.fillStyle = hGrad;
+  ctx.fillRect(0, baseY - 40, W, 120);
+
+  // Pipeline center
+  const totalW = NODE_W * 4 + GAP * 3;
+  const startX = W/2 - totalW/2 + NODE_W/2;
+  const pipeY = baseY - 80;
+
+  // Connections
+  for (let i = 0; i < 3; i++) {
+    const x1 = startX + i * (NODE_W + GAP) + NODE_W/2;
+    const x2 = startX + (i+1) * (NODE_W + GAP) - NODE_W/2;
+    drawConnection(x1, pipeY, x2, pipeY, nodeColors[i], connProgress[i]);
+  }
+
+  // Nodes
+  for (let i = 0; i < 4; i++) {
+    const nx = startX + i * (NODE_W + GAP);
+    const active = i === activeNode;
+    drawNode(nx, pipeY, NODE_W, NODE_H, nodeColors[i], nodeLabels[i], 1, active);
+  }
+
+  // Node labels below
+  for (let i = 0; i < 4; i++) {
+    const nx = startX + i * (NODE_W + GAP);
+    const active = i <= activeNode && activeNode >= 0;
+    ctx.fillStyle = `rgba(255,255,255,${active ? 0.7 : 0.12})`;
+    ctx.font = `600 ${active ? 11 : 9}px -apple-system,BlinkMacSystemFont,sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.fillText(nodeNames[i], nx, pipeY + NODE_H/2 + 24);
+  }
+
+  // Particles
+  updateParticles();
+  drawParticles();
+
+  requestAnimationFrame(draw);
+}
+
+requestAnimationFrame(draw);
+</script>
 </body>
 </html>
