@@ -5,7 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>K — Products, not code.</title>
 <style>
-  :root { --bg: #000; --text: #f0f0f0; --dim: #555; --faint: #1a1a1a; }
+  :root {
+    --bg: #000; --text: #f0f0f0; --dim: #555; --faint: #1a1a1a;
+    --c1: #6c8cff; --c2: #a78bfa; --c3: #4dd0e1; --c4: #f472b6;
+  }
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   body {
@@ -29,8 +32,8 @@
   /* ── HEADLINE ── */
   .tag {
     font-size: 10px; font-weight: 600; letter-spacing: 0.3em;
-    text-transform: uppercase; color: rgba(255,255,255,0.3); margin-bottom: 28px;
-    text-shadow: 0 0 30px rgba(255,255,255,0.08);
+    text-transform: uppercase; color: rgba(108,140,255,0.35); margin-bottom: 28px;
+    text-shadow: 0 0 30px rgba(108,140,255,0.1);
   }
   .headline {
     font-size: clamp(40px, 6vw, 64px);
@@ -38,7 +41,7 @@
     margin-bottom: 12px;
   }
   .hl-glow {
-    background: linear-gradient(180deg, #fff 0%, rgba(255,255,255,0.7) 100%);
+    background: linear-gradient(135deg, #fff 0%, var(--c1) 40%, var(--c2) 100%);
     -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     background-clip: text;
   }
@@ -81,17 +84,18 @@
   .step-wrap.visible .card {
     border-color: rgba(255,255,255,0.1);
     background: rgba(255,255,255,0.008);
+    box-shadow: 0 0 30px rgba(108,140,255,0.06);
   }
   .step-wrap.visible .card .icon {
     color: rgba(255,255,255,0.8);
-    text-shadow: 0 0 20px rgba(255,255,255,0.2);
+    text-shadow: 0 0 20px rgba(167,139,250,0.3);
   }
   .step-wrap.visible .card .name { color: rgba(255,255,255,0.35); }
   .connector {
     width: 36px; height: 1px; background: rgba(255,255,255,0.03);
     flex-shrink: 0; transition: all .6s;
   }
-  .connector.lit { background: rgba(255,255,255,0.15); box-shadow: 0 0 8px rgba(255,255,255,0.08); }
+  .connector.lit { background: rgba(108,140,255,0.25); box-shadow: 0 0 8px rgba(108,140,255,0.12); }
   .pipe-legend {
     font-size: 10px; color: rgba(255,255,255,0.08); letter-spacing: 0.12em;
     text-transform: uppercase; margin-top: 24px;
@@ -115,10 +119,10 @@
     cursor: pointer; backdrop-filter: blur(4px);
   }
   .social-link:hover {
-    border-color: rgba(255,255,255,0.4);
+    border-color: var(--c1);
     transform: translateY(-4px);
-    background: rgba(255,255,255,0.04);
-    box-shadow: 0 8px 24px rgba(0,0,0,0.5), 0 0 20px rgba(255,255,255,0.05);
+    background: rgba(108,140,255,0.06);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.5), 0 0 20px rgba(108,140,255,0.08);
   }
   .social-link svg { width: 18px; height: 18px; }
   .social-link svg path,
@@ -202,7 +206,6 @@
 
   <!-- STATEMENT -->
   <div class="statement">
-    <p>15 years in cross-border. Now building AI products where Agent architecture reshapes how business gets done — not demos, not wrappers, not hype.</p>
     <p>Every repo I ship is a complete commercial proposition. Code is just one component.</p>
   </div>
 
@@ -273,12 +276,21 @@ function resize() {
 resize(); window.addEventListener('resize', resize);
 
 const PARTICLE_COUNT = 90;
+const COLORS = [
+  'rgba(108,140,255,COL)',   // blue
+  'rgba(167,139,250,COL)',   // purple
+  'rgba(77,208,225,COL)',    // cyan
+  'rgba(244,114,182,COL)',   // pink
+  'rgba(255,255,255,COL)'    // white
+];
 const particles = [];
 for (let i = 0; i < PARTICLE_COUNT; i++) {
+  const col = COLORS[Math.floor(Math.random() * COLORS.length)];
   particles.push({
     x: Math.random() * W, y: Math.random() * H,
     vx: (Math.random() - 0.5) * 0.3, vy: (Math.random() - 0.5) * 0.3,
-    r: Math.random() * 1.5 + 0.5
+    r: Math.random() * 1.5 + 0.5,
+    color: col
   });
 }
 
@@ -295,7 +307,7 @@ function draw() {
 
     ctx.beginPath();
     ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-    ctx.fillStyle = 'rgba(255,255,255,0.12)';
+    ctx.fillStyle = p.color.replace('COL', '0.18');
     ctx.fill();
   }
 
@@ -307,11 +319,11 @@ function draw() {
       const dy = particles[i].y - particles[j].y;
       const dist = Math.sqrt(dx * dx + dy * dy);
       if (dist < MAX_DIST) {
-        const alpha = (1 - dist / MAX_DIST) * 0.08;
+        const alpha = (1 - dist / MAX_DIST) * 0.1;
         ctx.beginPath();
         ctx.moveTo(particles[i].x, particles[i].y);
         ctx.lineTo(particles[j].x, particles[j].y);
-        ctx.strokeStyle = `rgba(255,255,255,${alpha})`;
+        ctx.strokeStyle = particles[i].color.replace('COL', alpha.toFixed(3));
         ctx.lineWidth = 0.5;
         ctx.stroke();
       }
@@ -325,18 +337,18 @@ function draw() {
       const dy = p.y - mouseY;
       const dist = Math.sqrt(dx * dx + dy * dy);
       if (dist < 180) {
-        const alpha = (1 - dist / 180) * 0.15;
+        const alpha = (1 - dist / 180) * 0.2;
         ctx.beginPath();
         ctx.moveTo(p.x, p.y);
         ctx.lineTo(mouseX, mouseY);
-        ctx.strokeStyle = `rgba(255,255,255,${alpha})`;
+        ctx.strokeStyle = p.color.replace('COL', alpha.toFixed(3));
         ctx.lineWidth = 0.6;
         ctx.stroke();
 
         // Glow dot on particle near mouse
         ctx.beginPath();
-        ctx.arc(p.x, p.y, p.r * 2, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(255,255,255,${alpha * 0.6})`;
+        ctx.arc(p.x, p.y, p.r * 2.5, 0, Math.PI * 2);
+        ctx.fillStyle = p.color.replace('COL', (alpha * 0.5).toFixed(3));
         ctx.fill();
       }
     }
