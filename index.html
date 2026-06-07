@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>K · Build with Intent</title>
+<style>
+  :root {
+    --bg: #080c12;
+    --s1: #0f1419;
+    --s2: #161b23;
+    --s3: #1c2230;
+    --t1: #e6edf3;
+    --t2: #8b949e;
+    --t3: #6e7681;
+    --accent: #4da6ff;
+    --green: #3fb950;
+    --purple: #a371f7;
+    --yellow: #d2991d;
+    --r: 12px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--t2);
+    font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Noto Sans SC', sans-serif;
+    line-height: 1.7;
+    font-size: 15px;
+    min-height: 100vh;
+  }
+
+  /* Hero */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    padding: 60px 24px;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -50%; left: -50%;
+    width: 200%; height: 200%;
+    background: radial-gradient(ellipse at 30% 50%, rgba(77,166,255,0.05) 0%, transparent 50%),
+                radial-gradient(ellipse at 70% 30%, rgba(163,113,247,0.04) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 80%, rgba(63,185,80,0.03) 0%, transparent 40%);
+    animation: pulse 10s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%, 100% { opacity: 0.6; } 50% { opacity: 1; } }
+  .hero-inner { position: relative; z-index: 1; max-width: 700px; }
+  .hero h1 {
+    font-size: 64px; font-weight: 800; color: var(--t1); letter-spacing: -0.03em; margin-bottom: 8px;
+  }
+  .hero h1 span { background: linear-gradient(135deg, var(--accent), var(--purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .hero .tagline { font-size: 20px; color: var(--t2); margin-bottom: 8px; font-weight: 500; }
+  .hero .signature {
+    display: inline-block;
+    background: var(--s1);
+    border: 1px solid var(--s3);
+    border-radius: 8px;
+    padding: 14px 24px;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 13px;
+    color: var(--accent);
+    margin-top: 32px;
+    letter-spacing: 0.03em;
+  }
+  .hero .signature em { color: var(--t2); font-style: normal; }
+
+  /* Projects */
+  .section {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 24px 80px;
+  }
+  .section h2 {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--t3);
+    margin-bottom: 24px;
+    text-align: center;
+  }
+  .projects {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+  .project {
+    background: var(--s1);
+    border: 1px solid var(--s3);
+    border-radius: var(--r);
+    padding: 28px;
+    transition: border-color .2s, transform .2s;
+    text-decoration: none;
+    color: inherit;
+    display: block;
+  }
+  .project:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .project .p-icon { font-size: 28px; margin-bottom: 12px; }
+  .project .p-name { font-size: 18px; font-weight: 700; color: var(--t1); margin-bottom: 4px; }
+  .project .p-desc { font-size: 13px; color: var(--t2); margin-bottom: 10px; line-height: 1.6; }
+  .project .p-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+  .tag {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .tag-bp { background: rgba(77,166,255,0.12); color: var(--accent); }
+  .tag-brd { background: rgba(163,113,247,0.12); color: var(--purple); }
+  .tag-live { background: rgba(63,185,80,0.12); color: var(--green); }
+  .tag-wip { background: rgba(210,153,29,0.12); color: var(--yellow); }
+
+  /* Footer */
+  .footer {
+    text-align: center;
+    padding: 40px 24px;
+    border-top: 1px solid var(--s3);
+    color: var(--t3);
+    font-size: 12px;
+    line-height: 2;
+  }
+  .footer a { color: var(--accent); text-decoration: none; }
+  .footer a:hover { text-decoration: underline; }
+
+  /* Scroll indicator */
+  .scroll-hint {
+    position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
+    color: var(--t3); font-size: 11px; letter-spacing: 0.08em;
+    animation: fadeHint 2s ease-in-out infinite;
+  }
+  @keyframes fadeHint { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
+
+  @media (max-width: 640px) {
+    .hero h1 { font-size: 40px; }
+    .projects { grid-template-columns: 1fr; }
+    .hero .signature { font-size: 11px; padding: 10px 16px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-inner">
+    <h1>Hey, I'm <span>K</span>.</h1>
+    <p class="tagline">COO by day. Builder by nature.</p>
+    <p style="color:var(--t3);font-size:15px">Shipping products with business plans attached.</p>
+    <div class="signature">
+      📋 <em>BP</em> + 📐 <em>BRD</em> + 🔬 <em>Research</em> + 💻 <em>Code</em> &nbsp;=&nbsp; every repo
+    </div>
+  </div>
+  <div class="scroll-hint">▼ PROJECTS</div>
+</div>
+
+<div class="section">
+  <h2>What I'm Building</h2>
+  <div class="projects">
+
+    <a href="https://github.com/KevPH2026/VibeCut" class="project">
+      <div class="p-icon">🎬</div>
+      <div class="p-name">VibeCut</div>
+      <div class="p-desc">Agent-driven video editor — you describe the feeling, AI handles the timeline. Forked from Clypra's S-tier WebGL engine.</div>
+      <div class="p-tags">
+        <span class="tag tag-bp">BP</span>
+        <span class="tag tag-brd">BRD</span>
+        <span class="tag tag-wip">Building</span>
+      </div>
+    </a>
+
+    <a href="https://kevph2026.github.io/amy-delivery-cockpit/" class="project">
+      <div class="p-icon">🏭</div>
+      <div class="p-name">AIMI · Delivery Command Center</div>
+      <div class="p-desc">AI-powered operations cockpit for cross-border marketing delivery. 8-module real-time dashboard managing CS, outsourcing, SOPs, certifications.</div>
+      <div class="p-tags">
+        <span class="tag tag-live">Live</span>
+      </div>
+    </a>
+
+    <a href="https://storyteller.mom" class="project">
+      <div class="p-icon">🌙</div>
+      <div class="p-name">StoryTeller</div>
+      <div class="p-desc">AI bedtime stories for kids worldwide. Personalized, narrated, beautifully illustrated. Built with Next.js + MiniMax.</div>
+      <div class="p-tags">
+        <span class="tag tag-live">Live</span>
+      </div>
+    </a>
+
+    <a href="https://github.com/KevPH2026" class="project">
+      <div class="p-icon">✍️</div>
+      <div class="p-name">原点.Lens</div>
+      <div class="p-desc">Deep thinking on AI, cross-border business & the future. WeChat Official Account. Not tutorials — first principles.</div>
+      <div class="p-tags">
+        <span class="tag tag-live">Writing</span>
+      </div>
+    </a>
+
+  </div>
+</div>
+
+<div class="footer">
+  <p>KevPH · Beijing · <a href="https://github.com/KevPH2026">GitHub</a></p>
+  <p style="color:var(--t3);font-size:11px">"离钱越近的生意越不愁没市场"</p>
+</div>
+
+</body>
+</html>
