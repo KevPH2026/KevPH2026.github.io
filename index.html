@@ -14,8 +14,7 @@
   body {
     background: var(--bg);
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
-    min-height: 100vh; display: flex; flex-direction: column;
-    color: var(--text); -webkit-font-smoothing: antialiased; overflow-x: hidden;
+    color: var(--text); -webkit-font-smoothing: antialiased;
     cursor: crosshair;
   }
 
@@ -23,9 +22,9 @@
 
   .page {
     position: relative; z-index: 1;
-    width: 100%; max-width: 640px; padding: 60px 40px;
+    width: 100%; max-width: 640px; padding: 80px 40px;
     display: flex; flex-direction: column; gap: 64px;
-    pointer-events: none; margin: auto;
+    pointer-events: none; margin: 0 auto;
   }
   .page > * { pointer-events: auto; }
 
