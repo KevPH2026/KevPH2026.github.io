@@ -5,178 +5,104 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>K — Products, not code.</title>
 <style>
-  :root {
-    --bg: #000;
-    --panel: rgba(10,10,10,0.7);
-    --text: #f5f5f5;
-    --dim: #555;
-    --faint: #2a2a2a;
-    --active: #fff;
-  }
+  :root { --bg: #000; --text: #f5f5f5; --dim: #555; --faint: #222; }
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   body {
     background: var(--bg);
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
-    height: 100vh; overflow: hidden;
-    color: var(--text);
-    -webkit-font-smoothing: antialiased;
+    min-height: 100vh; display: flex; align-items: center; justify-content: center;
+    color: var(--text); -webkit-font-smoothing: antialiased; overflow-x: hidden;
   }
 
-  /* ── AMBIENT ORBS ── */
+  /* Ambient orbs */
   .ambient { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
-  .orb {
-    position: absolute; border-radius: 50%; filter: blur(120px); opacity: 0.15;
-    transition: transform 20s linear;
-  }
-  .orb-1 { width: 500px; height: 500px; background: #1a1a2e; top: -20%; left: -10%; animation: drift1 18s ease-in-out infinite; }
-  .orb-2 { width: 400px; height: 400px; background: #0d1b2a; bottom: -15%; right: -5%; animation: drift2 22s ease-in-out infinite; }
-  .orb-3 { width: 300px; height: 300px; background: #16213e; top: 40%; left: 50%; animation: drift3 25s ease-in-out infinite; }
-  @keyframes drift1 { 0%,100% { transform: translate(0,0) scale(1); } 33% { transform: translate(60px,-40px) scale(1.15); } 66% { transform: translate(-30px,20px) scale(0.9); } }
-  @keyframes drift2 { 0%,100% { transform: translate(0,0) scale(1); } 33% { transform: translate(-50px,30px) scale(1.1); } 66% { transform: translate(20px,-50px) scale(0.85); } }
-  @keyframes drift3 { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(-40px,-60px) scale(1.2); } }
+  .orb { position: absolute; border-radius: 50%; filter: blur(140px); opacity: 0.12; }
+  .orb-1 { width: 600px; height: 600px; background: #1a1a2e; top: -25%; left: -15%; animation: drift1 20s ease-in-out infinite; }
+  .orb-2 { width: 450px; height: 450px; background: #0d1b2a; bottom: -20%; right: -10%; animation: drift2 24s ease-in-out infinite; }
+  .orb-3 { width: 350px; height: 350px; background: #16213e; top: 50%; left: 55%; animation: drift3 28s ease-in-out infinite; }
+  @keyframes drift1 { 0%,100% { transform: translate(0,0) scale(1); } 33% { transform: translate(80px,-60px) scale(1.15); } 66% { transform: translate(-40px,30px) scale(0.9); } }
+  @keyframes drift2 { 0%,100% { transform: translate(0,0) scale(1); } 33% { transform: translate(-60px,40px) scale(1.1); } 66% { transform: translate(30px,-50px) scale(0.85); } }
+  @keyframes drift3 { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(-50px,-70px) scale(1.25); } }
 
-  /* ── LAYOUT ── */
-  .layout { position: relative; z-index: 1; display: flex; height: 100vh; }
-
-  /* ── LEFT PANEL ── */
-  .left {
-    width: 280px; min-width: 280px;
-    background: rgba(8,8,8,0.75); backdrop-filter: blur(24px);
-    border-right: 1px solid rgba(255,255,255,0.06);
-    display: flex; flex-direction: column; justify-content: space-between;
-    padding: 48px 36px; z-index: 10;
-  }
-  .logo-block { }
-  .logo {
-    font-size: 13px; font-weight: 700; letter-spacing: 0.25em;
-    color: rgba(255,255,255,0.5); margin-bottom: 50px;
-  }
-  .nav { display: flex; flex-direction: column; gap: 4px; }
-  .nav-item {
-    display: flex; align-items: center; gap: 14px;
-    padding: 14px 18px; border-radius: 10px;
-    cursor: pointer; transition: all .35s;
-    border: 1px solid transparent;
-    background: transparent;
-    color: rgba(255,255,255,0.25); font-size: 13px;
-    font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase;
-    position: relative;
-  }
-  .nav-item:hover {
-    color: rgba(255,255,255,0.5);
-    background: rgba(255,255,255,0.02);
-  }
-  .nav-item.active {
-    color: var(--active);
-    background: rgba(255,255,255,0.04);
-    border-color: rgba(255,255,255,0.08);
-  }
-  .nav-item .dot {
-    width: 6px; height: 6px; border-radius: 50%;
-    background: rgba(255,255,255,0.15); transition: all .35s;
-    flex-shrink: 0;
-  }
-  .nav-item.active .dot {
-    background: var(--active); box-shadow: 0 0 12px rgba(255,255,255,0.4);
-  }
-  .nav-item .badge {
-    margin-left: auto; font-size: 9px; font-weight: 600;
-    letter-spacing: 0.08em; color: rgba(255,255,255,0.12);
-    border: 1px solid rgba(255,255,255,0.06); border-radius: 4px;
-    padding: 2px 7px; transition: all .35s;
-  }
-  .nav-item.active .badge { color: rgba(255,255,255,0.3); border-color: rgba(255,255,255,0.12); }
-
-  .left-bottom {
-    font-size: 10px; color: rgba(255,255,255,0.12);
-    letter-spacing: 0.12em; line-height: 1.8;
+  /* Cursor glow */
+  .cursor-glow {
+    position: fixed; pointer-events: none; z-index: 0;
+    width: 350px; height: 350px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,0.025) 0%, transparent 70%);
+    transform: translate(-50%, -50%); opacity: 0; transition: opacity .4s;
   }
 
-  /* ── RIGHT PANEL ── */
-  .right {
-    flex: 1; position: relative; overflow: hidden;
-    display: flex; align-items: center; justify-content: center;
+  .page {
+    position: relative; z-index: 1;
+    width: 100%; max-width: 640px; padding: 60px 40px;
+    display: flex; flex-direction: column; gap: 64px;
   }
-  .section {
-    position: absolute; inset: 0;
-    display: flex; align-items: center; justify-content: center;
-    padding: 60px 80px;
-    opacity: 0; transform: translateY(20px);
-    pointer-events: none; transition: opacity .5s, transform .5s;
-  }
-  .section.active {
-    opacity: 1; transform: translateY(0);
-    pointer-events: auto;
-  }
-  .sec-inner { max-width: 620px; width: 100%; }
 
-  /* ── SECTION 1: PHILOSOPHY ── */
+  /* ── HEADLINE ── */
   .tag {
     font-size: 10px; font-weight: 600; letter-spacing: 0.28em;
     text-transform: uppercase; color: var(--dim); margin-bottom: 28px;
   }
   .headline {
-    font-size: clamp(40px, 6vw, 66px);
-    font-weight: 700; line-height: 1.04; letter-spacing: -0.025em;
-    margin-bottom: 14px;
+    font-size: clamp(38px, 6vw, 60px);
+    font-weight: 700; line-height: 1.05; letter-spacing: -0.025em;
+    margin-bottom: 12px;
   }
   .headline .swap { display: inline-block; position: relative; }
   .headline .swap .w {
     display: inline-block; transition: opacity .5s, transform .5s;
   }
-  .headline .swap .w.off {
-    opacity: 0; transform: translateY(8px); position: absolute; left: 0;
-  }
-  .headline .swap .w.on {
-    opacity: 1; transform: translateY(0);
-  }
+  .headline .swap .w.off { opacity: 0; transform: translateY(8px); position: absolute; left: 0; }
+  .headline .swap .w.on { opacity: 1; transform: translateY(0); }
   .headline .swap .w.init { opacity: 0; transform: translateY(-8px); }
-  .subtitle {
-    font-size: 14px; font-weight: 400; color: var(--dim); letter-spacing: 0.04em;
-  }
+  .subtitle { font-size: 14px; font-weight: 400; color: var(--dim); letter-spacing: 0.04em; }
 
-  /* ── SECTION 2: PIPELINE ── */
-  .section-label {
-    font-size: 10px; font-weight: 600; letter-spacing: 0.28em;
-    text-transform: uppercase; color: var(--dim); margin-bottom: 48px;
-  }
+  /* ── PIPELINE ── */
   .pipeline { display: flex; align-items: center; gap: 0; }
   .step-wrap {
     display: flex; align-items: center; gap: 0;
-    opacity: 0; transform: translateY(12px);
+    opacity: 0; transform: translateY(16px);
   }
   .step-wrap.visible {
     opacity: 1; transform: translateY(0);
     transition: opacity .7s, transform .7s;
   }
   .card {
-    width: 110px; height: 78px;
-    border: 1px solid rgba(255,255,255,0.06);
+    width: 106px; height: 76px;
+    border: 1px solid rgba(255,255,255,0.05);
     display: flex; flex-direction: column;
     align-items: center; justify-content: center;
-    gap: 6px; flex-shrink: 0;
-    transition: all .6s; background: rgba(255,255,255,0.01);
+    gap: 5px; flex-shrink: 0;
+    transition: all .6s; background: rgba(255,255,255,0.005);
   }
-  .card .icon { font-size: 18px; font-weight: 700; color: rgba(255,255,255,0.2); transition: color .6s; }
-  .card .name { font-size: 10px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255,255,255,0.08); transition: color .6s; }
-  .step-wrap.visible .card { border-color: rgba(255,255,255,0.12); background: rgba(255,255,255,0.02); }
-  .step-wrap.visible .card .icon { color: rgba(255,255,255,0.7); }
-  .step-wrap.visible .card .name { color: rgba(255,255,255,0.35); }
+  .card .icon { font-size: 17px; font-weight: 700; color: rgba(255,255,255,0.18); transition: color .6s; }
+  .card .name { font-size: 9px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255,255,255,0.07); transition: color .6s; }
+  .step-wrap.visible .card { border-color: rgba(255,255,255,0.12); background: rgba(255,255,255,0.015); }
+  .step-wrap.visible .card .icon { color: rgba(255,255,255,0.65); }
+  .step-wrap.visible .card .name { color: rgba(255,255,255,0.3); }
   .connector {
-    width: 36px; height: 1px; background: rgba(255,255,255,0.04);
+    width: 32px; height: 1px; background: rgba(255,255,255,0.04);
     flex-shrink: 0; transition: background .6s;
   }
   .connector.lit { background: rgba(255,255,255,0.12); }
   .pipe-legend {
-    font-size: 10px; color: rgba(255,255,255,0.12); letter-spacing: 0.08em;
-    margin-top: 28px; text-transform: uppercase;
+    font-size: 10px; color: rgba(255,255,255,0.1); letter-spacing: 0.1em;
+    text-transform: uppercase; margin-top: 22px;
   }
 
-  /* ── SECTION 3: CONNECT ── */
-  .social-row { display: flex; flex-wrap: wrap; gap: 12px; }
+  /* ── STATEMENT ── */
+  .statement { display: flex; flex-direction: column; gap: 10px; }
+  .statement p { font-size: 15px; line-height: 1.75; color: var(--dim); letter-spacing: 0.015em; }
+
+  /* ── SOCIAL ── */
+  .social-label {
+    font-size: 10px; font-weight: 600; letter-spacing: 0.24em;
+    text-transform: uppercase; color: var(--faint); margin-bottom: 22px;
+  }
+  .social-row { display: flex; flex-wrap: wrap; gap: 10px; }
   .social-link {
-    width: 52px; height: 52px; border-radius: 50%;
+    width: 48px; height: 48px; border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
     border: 1px solid rgba(255,255,255,0.06);
     transition: all .35s; text-decoration: none; position: relative;
@@ -187,10 +113,10 @@
     transform: translateY(-3px);
     background: rgba(255,255,255,0.03);
   }
-  .social-link svg { width: 19px; height: 19px; }
+  .social-link svg { width: 18px; height: 18px; }
   .social-link svg path,
   .social-link svg rect,
-  .social-link svg circle { fill: none; stroke: rgba(255,255,255,0.25); stroke-width: 1.2; }
+  .social-link svg circle { fill: none; stroke: rgba(255,255,255,0.22); stroke-width: 1.2; }
   .social-link:hover svg path,
   .social-link:hover svg rect,
   .social-link:hover svg circle { stroke: rgba(255,255,255,0.7); }
@@ -204,173 +130,120 @@
   }
   .qr-overlay.show { opacity: 1; pointer-events: auto; }
   .qr-modal { text-align: center; position: relative; }
-  .qr-modal img {
-    width: 240px; height: 240px; border-radius: 14px; display: block; margin: 0 auto;
-  }
-  .qr-modal .qr-label {
-    font-size: 11px; font-weight: 600; letter-spacing: 0.14em;
-    text-transform: uppercase; color: rgba(255,255,255,0.5); margin-bottom: 18px;
-  }
+  .qr-modal img { width: 240px; height: 240px; border-radius: 14px; display: block; margin: 0 auto; }
+  .qr-modal .qr-label { font-size: 11px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(255,255,255,0.5); margin-bottom: 18px; }
   .qr-modal .qr-hint { font-size: 10px; color: rgba(255,255,255,0.2); margin-top: 16px; }
   .qr-close {
     position: absolute; top: -42px; right: -42px;
     width: 36px; height: 36px; border-radius: 50%;
     border: 1px solid rgba(255,255,255,0.1); background: none;
     color: rgba(255,255,255,0.35); font-size: 18px; cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    transition: all .25s;
+    display: flex; align-items: center; justify-content: center; transition: all .25s;
   }
   .qr-close:hover { color: #fff; border-color: rgba(255,255,255,0.3); }
 
-  /* ── STATEMENT ── */
-  .statement { margin-top: 48px; display: flex; flex-direction: column; gap: 10px; }
-  .statement p { font-size: 15px; line-height: 1.75; color: var(--dim); letter-spacing: 0.015em; }
-
-  /* ── CURSOR GLOW ── */
-  .cursor-glow {
-    position: fixed; pointer-events: none; z-index: 0;
-    width: 300px; height: 300px; border-radius: 50%;
-    background: radial-gradient(circle, rgba(255,255,255,0.03) 0%, transparent 70%);
-    transform: translate(-50%, -50%); transition: opacity .3s;
-    opacity: 0;
+  /* ── BOTTOM ── */
+  .bottom-line {
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 10px; color: var(--faint); letter-spacing: 0.08em;
+    padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.04);
   }
 
-  @media (max-width: 700px) {
-    .layout { flex-direction: column; }
-    .left {
-      width: 100%; min-width: 0; flex-direction: row;
-      padding: 20px 24px; align-items: center; border-right: none;
-      border-bottom: 1px solid rgba(255,255,255,0.06);
-    }
-    .logo { margin-bottom: 0; font-size: 11px; }
-    .nav { flex-direction: row; gap: 2px; }
-    .nav-item { padding: 8px 12px; font-size: 10px; gap: 6px; }
-    .nav-item .dot { width: 4px; height: 4px; }
-    .nav-item .badge { display: none; }
-    .left-bottom { display: none; }
-    .right { flex: 1; }
-    .section { padding: 32px 24px; }
+  @media (max-width: 500px) {
+    .page { padding: 40px 24px; gap: 48px; }
     .card { width: 78px; height: 60px; }
     .card .icon { font-size: 14px; }
     .card .name { font-size: 8px; }
     .connector { width: 16px; }
-    .social-row { gap: 8px; }
     .social-link { width: 42px; height: 42px; }
-    .social-link svg { width: 16px; height: 16px; }
+    .social-link svg { width: 15px; height: 15px; }
   }
 </style>
 </head>
 <body>
 
-<!-- Ambient orbs -->
 <div class="ambient">
   <div class="orb orb-1"></div>
   <div class="orb orb-2"></div>
   <div class="orb orb-3"></div>
 </div>
-
-<!-- Cursor glow -->
 <div class="cursor-glow" id="cursorGlow"></div>
 
-<div class="layout">
+<div class="page">
 
-  <!-- ═══ LEFT PANEL ═══ -->
-  <aside class="left">
-    <div class="logo-block">
-      <div class="logo">K</div>
-      <nav class="nav">
-        <div class="nav-item active" data-section="0">
-          <span class="dot"></span> Philosophy
-        </div>
-        <div class="nav-item" data-section="1">
-          <span class="dot"></span> Pipeline
-        </div>
-        <div class="nav-item" data-section="2">
-          <span class="dot"></span> Connect
-        </div>
-      </nav>
+  <!-- HEADLINE -->
+  <div>
+    <div class="tag">Focus · AI‑Native &amp; Agent Products</div>
+    <div class="headline">
+      I don't just create<br>
+      <span class="swap" id="swap">
+        <span class="w on" id="wordCode">code</span>
+        <span class="w init" id="wordProducts">products</span>
+      </span>.
     </div>
-    <div class="left-bottom">
-      KevPH<br>Beijing
+    <div class="subtitle">Business plan before the first commit. Always.</div>
+  </div>
+
+  <!-- PIPELINE -->
+  <div>
+    <div class="pipeline" id="pipeline">
+      <div class="step-wrap" data-step="0"><div class="card"><div class="icon">📋</div><div class="name">BP</div></div></div>
+      <div class="connector" data-step="0"></div>
+      <div class="step-wrap" data-step="1"><div class="card"><div class="icon">📐</div><div class="name">BRD</div></div></div>
+      <div class="connector" data-step="1"></div>
+      <div class="step-wrap" data-step="2"><div class="card"><div class="icon">🔬</div><div class="name">RESEARCH</div></div></div>
+      <div class="connector" data-step="2"></div>
+      <div class="step-wrap" data-step="3"><div class="card"><div class="icon">{ }</div><div class="name">CODE</div></div></div>
     </div>
-  </aside>
+    <div class="pipe-legend">Business Plan → BRD → Research → Code</div>
+  </div>
 
-  <!-- ═══ RIGHT PANEL ═══ -->
-  <main class="right">
+  <!-- STATEMENT -->
+  <div class="statement">
+    <p>15 years in cross-border. Now building AI products where Agent architecture reshapes how business gets done — not demos, not wrappers, not hype.</p>
+    <p>Every repo I ship is a complete commercial proposition. Code is just one component.</p>
+  </div>
 
-    <!-- SECTION 0: PHILOSOPHY -->
-    <section class="section active" data-section="0">
-      <div class="sec-inner">
-        <div class="tag">Focus · AI‑Native &amp; Agent Products</div>
-        <div class="headline">
-          I don't just create<br>
-          <span class="swap" id="swap">
-            <span class="w on" id="wordCode">code</span>
-            <span class="w init" id="wordProducts">products</span>
-          </span>.
-        </div>
-        <div class="subtitle">Business plan before the first commit. Always.</div>
-        <div class="statement">
-          <p>15 years in cross-border. Now building AI products where Agent architecture reshapes how business gets done — not demos, not wrappers, not hype.</p>
-          <p>Every repo I ship is a complete commercial proposition. Code is just one component.</p>
-        </div>
-      </div>
-    </section>
+  <!-- SOCIAL -->
+  <div>
+    <div class="social-label">Connect</div>
+    <div class="social-row">
+      <a class="social-link" href="mailto:kiven1026@gmail.com" title="Email">
+        <svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 7l10 7 10-7"/></svg>
+      </a>
+      <span class="social-link" onclick="openQR('wechat')" title="WeChat">
+        <svg viewBox="0 0 24 24"><path d="M8.5 11a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zM15.5 11a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"/><path d="M6.5 4C3.46 4 1 6.24 1 9c0 1.54.73 2.9 1.87 3.8L2 15l2.54-1.27C5.34 13.9 6.16 14 7 14"/><path d="M17.5 10c3.04 0 5.5 2.24 5.5 5 0 1.54-.73 2.9-1.87 3.8L22 21l-2.54-1.27A5.8 5.8 0 0 1 17 20c-3.04 0-5.5-2.24-5.5-5s2.46-5 5.5-5z"/></svg>
+      </span>
+      <a class="social-link" href="https://x.com/skyerK12" target="_blank" title="Twitter">
+        <svg viewBox="0 0 24 24"><path d="M4 4l6.5 8.7L3.7 20h1.5l5.7-6.6L15.5 20H20l-6.8-9.1L19.4 4h-1.5l-5.4 6.3L8.5 4H4z"/></svg>
+      </a>
+      <a class="social-link" href="https://www.linkedin.com/in/kevin-zhu-8830607b" target="_blank" title="LinkedIn">
+        <svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><circle cx="7" cy="10" r="1.5"/><path d="M5.5 14h3v-6h-3zM10 14h2.5v-3.5a1.5 1.5 0 0 1 3 0V14H18v-4a4 4 0 0 0-8 0v4z"/></svg>
+      </a>
+      <a class="social-link" href="https://thesuperk.substack.com" target="_blank" title="Substack">
+        <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 10h10M7 14h10"/></svg>
+      </a>
+      <a class="social-link" href="https://superk.ai" target="_blank" title="superk.ai">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3.5 12h17M12 3.5a15 15 0 0 1 0 17M12 3.5a15 15 0 0 0 0 17"/></svg>
+      </a>
+      <a class="social-link" href="https://bonjour.bio/kev" target="_blank" title="Bonjour">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12h8M12 8v8"/></svg>
+      </a>
+      <a class="social-link" href="https://www.xiaohongshu.com/user/profile/670f7fc2000000000d0279e5" target="_blank" title="小红书">
+        <svg viewBox="0 0 24 24"><rect x="3" y="2" width="18" height="20" rx="3"/><path d="M7 7l5 6-3 5M12 7l3 3-2 4"/></svg>
+      </a>
+      <span class="social-link" onclick="openQR('douyin')" title="抖音">
+        <svg viewBox="0 0 24 24"><path d="M18 5v6a6 6 0 0 1-6 6 6 6 0 0 1-6-6 6 6 0 0 1 6-6h1v4a3 3 0 0 0-1-0.5 2 2 0 1 0 2 2.5V5h4z"/></svg>
+      </span>
+    </div>
+  </div>
 
-    <!-- SECTION 1: PIPELINE -->
-    <section class="section" data-section="1">
-      <div class="sec-inner">
-        <div class="section-label">Every repo ships with</div>
-        <div class="pipeline" id="pipeline">
-          <div class="step-wrap" data-step="0"><div class="card"><div class="icon">📋</div><div class="name">BP</div></div></div>
-          <div class="connector" data-step="0"></div>
-          <div class="step-wrap" data-step="1"><div class="card"><div class="icon">📐</div><div class="name">BRD</div></div></div>
-          <div class="connector" data-step="1"></div>
-          <div class="step-wrap" data-step="2"><div class="card"><div class="icon">🔬</div><div class="name">RESEARCH</div></div></div>
-          <div class="connector" data-step="2"></div>
-          <div class="step-wrap" data-step="3"><div class="card"><div class="icon">{ }</div><div class="name">CODE</div></div></div>
-        </div>
-        <div class="pipe-legend">Business Plan → Business Requirements → Research → Code</div>
-      </div>
-    </section>
+  <!-- BOTTOM -->
+  <div class="bottom-line">
+    <span>KevPH · Beijing</span>
+    <span>BP → BRD → R → { }</span>
+  </div>
 
-    <!-- SECTION 2: CONNECT -->
-    <section class="section" data-section="2">
-      <div class="sec-inner">
-        <div class="section-label">Connect</div>
-        <div class="social-row">
-          <a class="social-link" href="mailto:kiven1026@gmail.com" title="Email">
-            <svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 7l10 7 10-7"/></svg>
-          </a>
-          <span class="social-link" onclick="openQR('wechat')" title="WeChat">
-            <svg viewBox="0 0 24 24"><path d="M8.5 11a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zM15.5 11a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"/><path d="M6.5 4C3.46 4 1 6.24 1 9c0 1.54.73 2.9 1.87 3.8L2 15l2.54-1.27C5.34 13.9 6.16 14 7 14"/><path d="M17.5 10c3.04 0 5.5 2.24 5.5 5 0 1.54-.73 2.9-1.87 3.8L22 21l-2.54-1.27A5.8 5.8 0 0 1 17 20c-3.04 0-5.5-2.24-5.5-5s2.46-5 5.5-5z"/></svg>
-          </span>
-          <a class="social-link" href="https://x.com/skyerK12" target="_blank" title="Twitter">
-            <svg viewBox="0 0 24 24"><path d="M4 4l6.5 8.7L3.7 20h1.5l5.7-6.6L15.5 20H20l-6.8-9.1L19.4 4h-1.5l-5.4 6.3L8.5 4H4z"/></svg>
-          </a>
-          <a class="social-link" href="https://www.linkedin.com/in/kevin-zhu-8830607b" target="_blank" title="LinkedIn">
-            <svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><circle cx="7" cy="10" r="1.5"/><path d="M5.5 14h3v-6h-3zM10 14h2.5v-3.5a1.5 1.5 0 0 1 3 0V14H18v-4a4 4 0 0 0-8 0v4z"/></svg>
-          </a>
-          <a class="social-link" href="https://thesuperk.substack.com" target="_blank" title="Substack">
-            <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 10h10M7 14h10"/></svg>
-          </a>
-          <a class="social-link" href="https://superk.ai" target="_blank" title="Website">
-            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3.5 12h17M12 3.5a15 15 0 0 1 0 17M12 3.5a15 15 0 0 0 0 17"/></svg>
-          </a>
-          <a class="social-link" href="https://bonjour.bio/kev" target="_blank" title="Bonjour">
-            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12h8M12 8v8"/></svg>
-          </a>
-          <a class="social-link" href="https://www.xiaohongshu.com/user/profile/670f7fc2000000000d0279e5" target="_blank" title="小红书">
-            <svg viewBox="0 0 24 24"><rect x="3" y="2" width="18" height="20" rx="3"/><path d="M7 7l5 6-3 5M12 7l3 3-2 4"/></svg>
-          </a>
-          <span class="social-link" onclick="openQR('douyin')" title="抖音">
-            <svg viewBox="0 0 24 24"><path d="M18 5v6a6 6 0 0 1-6 6 6 6 0 0 1-6-6 6 6 0 0 1 6-6h1v4a3 3 0 0 0-1-0.5 2 2 0 1 0 2 2.5V5h4z"/></svg>
-          </span>
-        </div>
-      </div>
-    </section>
-
-  </main>
 </div>
 
 <!-- QR MODAL -->
@@ -384,88 +257,34 @@
 </div>
 
 <script>
-// ── SECTION SWITCHING ──
-const navItems = document.querySelectorAll('.nav-item');
-const sections = document.querySelectorAll('.section');
-let pipelinePlayed = false;
-
-navItems.forEach(item => {
-  item.addEventListener('click', () => {
-    const idx = parseInt(item.dataset.section);
-    // Update nav
-    navItems.forEach(n => n.classList.remove('active'));
-    item.classList.add('active');
-    // Update sections
-    sections.forEach(s => s.classList.remove('active'));
-    sections[idx].classList.add('active');
-    // Play pipeline animation when switching to pipeline section
-    if (idx === 1 && !pipelinePlayed) {
-      setTimeout(playPipeline, 300);
-      pipelinePlayed = true;
-    }
-  });
-});
-
-// ── WORD SWAP (Philosophy section) ──
+// ── WORD SWAP ──
 const swapCode = document.getElementById('wordCode');
 const swapProducts = document.getElementById('wordProducts');
-
-// Reset: code visible, products hidden
-swapCode.classList.add('on');
-swapCode.classList.remove('off','init');
-swapProducts.classList.add('init');
-swapProducts.classList.remove('on','off');
-
-// Start word swap immediately
 setTimeout(() => {
-  swapCode.classList.add('off');
-  swapCode.classList.remove('on');
-  swapProducts.classList.remove('init');
-  swapProducts.classList.add('on');
-}, 1200);
+  swapCode.classList.add('off'); swapCode.classList.remove('on');
+  swapProducts.classList.remove('init'); swapProducts.classList.add('on');
+}, 1600);
 
-// Re-trigger swap when switching to philosophy
-let swapTimeout;
-navItems[0].addEventListener('click', () => {
-  clearTimeout(swapTimeout);
-  swapCode.classList.add('on');
-  swapCode.classList.remove('off','init');
-  swapProducts.classList.add('init');
-  swapProducts.classList.remove('on','off');
-  swapTimeout = setTimeout(() => {
-    swapCode.classList.add('off');
-    swapCode.classList.remove('on');
-    swapProducts.classList.remove('init');
-    swapProducts.classList.add('on');
-  }, 800);
-});
-
-// ── PIPELINE ANIMATION ──
-function playPipeline() {
-  const steps = document.querySelectorAll('#pipeline .step-wrap');
-  const connectors = document.querySelectorAll('#pipeline .connector');
-  // Reset
-  steps.forEach(s => s.classList.remove('visible'));
-  connectors.forEach(c => c.classList.remove('lit'));
-  let i = 0;
-  function reveal() {
-    if (i >= steps.length) return;
-    steps[i].classList.add('visible');
-    if (i > 0 && connectors[i-1]) connectors[i-1].classList.add('lit');
-    i++;
-    setTimeout(reveal, 500);
-  }
-  setTimeout(reveal, 200);
+// ── PIPELINE ──
+const steps = document.querySelectorAll('#pipeline .step-wrap');
+const connectors = document.querySelectorAll('#pipeline .connector');
+let i = 0;
+function revealCard() {
+  if (i >= steps.length) return;
+  steps[i].classList.add('visible');
+  if (i > 0 && connectors[i-1]) connectors[i-1].classList.add('lit');
+  i++;
+  setTimeout(revealCard, 500);
 }
+setTimeout(revealCard, 800);
 
 // ── QR MODAL ──
 const qrMap = {
   wechat: { img: 'qr/wechat.jpg', label: 'WeChat' },
   douyin: { img: 'qr/douyin.jpg', label: '抖音' }
 };
-function openQR(platform) {
-  const q = qrMap[platform];
-  if (!q) return;
+function openQR(p) {
+  const q = qrMap[p]; if (!q) return;
   document.getElementById('qrImg').src = q.img;
   document.getElementById('qrLabel').textContent = q.label;
   document.getElementById('qrOverlay').classList.add('show');
@@ -474,16 +293,12 @@ function closeQR(e) {
   if (e && e.target !== document.getElementById('qrOverlay')) return;
   document.getElementById('qrOverlay').classList.remove('show');
 }
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') document.getElementById('qrOverlay').classList.remove('show');
-});
+document.addEventListener('keydown', e => { if (e.key==='Escape') document.getElementById('qrOverlay').classList.remove('show'); });
 
 // ── CURSOR GLOW ──
 const glow = document.getElementById('cursorGlow');
 document.addEventListener('mousemove', e => {
-  glow.style.left = e.clientX + 'px';
-  glow.style.top = e.clientY + 'px';
-  glow.style.opacity = '1';
+  glow.style.left = e.clientX+'px'; glow.style.top = e.clientY+'px'; glow.style.opacity = '1';
 });
 document.addEventListener('mouseleave', () => { glow.style.opacity = '0'; });
 </script>
