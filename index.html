@@ -6,156 +6,169 @@
 <title>K — Products, not code.</title>
 <style>
   :root {
-    --bg: #07080a;
-    --text: #e8eaed;
-    --dim: #5f6368;
-    --blue: #669df6;
+    --bg: #000;
+    --text: #f5f5f5;
+    --dim: #666;
+    --faint: #333;
+    --accent: #fff;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   body {
     background: var(--bg);
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
-    height: 100vh; overflow: hidden;
-    display: flex; align-items: center; justify-content: center;
+    min-height: 100vh; display: flex; align-items: center; justify-content: center;
     color: var(--text);
+    -webkit-font-smoothing: antialiased;
   }
 
   .page {
-    width: 100%; max-width: 1100px; padding: 0 80px;
-    display: flex; flex-direction: column; gap: 80px;
+    width: 100%; max-width: 680px; padding: 60px 40px;
+    display: flex; flex-direction: column; gap: 72px;
   }
 
-  /* ── TITLE ── */
-  .title-block { position: relative; }
+  /* ── HEADLINE ── */
+  .headline-block { position: relative; }
   .tag {
-    font-size: 11px; font-weight: 600; letter-spacing: 0.2em;
-    text-transform: uppercase; color: var(--blue);
-    margin-bottom: 24px;
+    font-size: 10px; font-weight: 600; letter-spacing: 0.28em;
+    text-transform: uppercase; color: var(--dim);
+    margin-bottom: 28px;
   }
   .headline {
-    font-size: clamp(44px, 7vw, 80px);
-    font-weight: 800; line-height: 1.02; letter-spacing: -0.025em;
-    max-width: 900px;
+    font-size: clamp(36px, 6vw, 60px);
+    font-weight: 700; line-height: 1.06; letter-spacing: -0.025em;
+    margin-bottom: 12px;
   }
-  .headline .hl {
-    color: var(--blue);
-    position: relative;
+  .headline .swap {
+    display: inline-block; position: relative;
+    width: auto; vertical-align: baseline;
   }
-  .headline .hl::after {
-    content: '';
-    position: absolute; bottom: -4px; left: 0; right: 0; height: 3px;
-    background: var(--blue); opacity: 0; transition: opacity .3s;
+  .headline .swap .w {
+    display: inline-block; transition: opacity .5s, transform .5s;
   }
-  .headline .hl.on::after { opacity: 1; }
+  .headline .swap .w.off {
+    opacity: 0; transform: translateY(8px); position: absolute; left: 0;
+  }
+  .headline .swap .w.on {
+    opacity: 1; transform: translateY(0);
+  }
+  .headline .swap .w.init {
+    opacity: 0; transform: translateY(-8px);
+  }
+  .subtitle {
+    font-size: 14px; font-weight: 400; color: var(--dim);
+    letter-spacing: 0.04em;
+  }
 
   /* ── PIPELINE ── */
   .pipeline {
-    display: flex; align-items: center; gap: 0;
+    display: flex; align-items: center; gap: 0; padding: 0;
   }
-  .step {
+  .step-wrap {
     display: flex; align-items: center; gap: 0;
-    opacity: 0.22; transition: opacity .6s;
+    opacity: 0; transform: translateY(12px);
   }
-  .step.show { opacity: 1; }
-  .step .box {
-    width: 120px; height: 72px;
-    border: 1px solid rgba(255,255,255,0.1);
+  .step-wrap.visible {
+    opacity: 1; transform: translateY(0);
+    transition: opacity .7s, transform .7s;
+  }
+  .card {
+    width: 90px; height: 68px;
+    border: 1px solid var(--faint);
     display: flex; flex-direction: column;
     align-items: center; justify-content: center;
-    gap: 6px;
+    gap: 5px; flex-shrink: 0;
+    transition: border-color .6s, background .6s;
   }
-  .step .box .label {
-    font-family: 'JetBrains Mono', 'Fira Code', monospace;
-    font-size: 13px; font-weight: 700; letter-spacing: 0.06em;
-    color: rgba(255,255,255,0.5); transition: color .6s;
-  }
-  .step .box .name {
-    font-size: 10px; font-weight: 500; letter-spacing: 0.08em;
-    text-transform: uppercase; color: rgba(255,255,255,0.2);
+  .card .icon {
+    font-size: 16px; font-weight: 700; color: var(--dim);
     transition: color .6s;
   }
-  .step.show .box {
-    border-color: rgba(255,255,255,0.25);
+  .card .name {
+    font-size: 9px; font-weight: 600; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--faint);
+    transition: color .6s;
   }
-  .step.show .box .label { color: #fff; }
-  .step.show .box .name { color: rgba(255,255,255,0.5); }
-  .step.show.current .box {
-    border-color: var(--blue);
-    background: rgba(102,157,246,0.06);
-    box-shadow: 0 0 40px rgba(102,157,246,0.12);
+  .step-wrap.visible .card {
+    border-color: rgba(255,255,255,0.18);
   }
-  .step.show.current .box .label { color: var(--blue); }
-  .step.show.current .box .name { color: rgba(102,157,246,0.7); }
-
+  .step-wrap.visible .card .icon { color: rgba(255,255,255,0.6); }
+  .step-wrap.visible .card .name { color: rgba(255,255,255,0.3); }
   .connector {
-    width: 60px; height: 1px;
-    background: rgba(255,255,255,0.08);
-    margin: 0 12px; transition: all .6s;
-    position: relative;
+    width: 28px; height: 1px;
+    background: var(--faint); flex-shrink: 0;
+    transition: background .6s;
   }
-  .connector.done {
-    background: rgba(255,255,255,0.25);
-  }
-  .connector.done::after {
-    content: '';
-    position: absolute; right: 0; top: -3px;
-    width: 6px; height: 6px; border-radius: 50%;
-    background: var(--blue);
-    box-shadow: 0 0 8px rgba(102,157,246,0.6);
+  .connector.lit {
+    background: rgba(255,255,255,0.18);
   }
 
   /* ── STATEMENT ── */
   .statement {
-    font-size: clamp(16px, 2.2vw, 22px);
-    font-weight: 600; letter-spacing: -0.01em;
-    color: var(--dim); max-width: 650px; line-height: 1.5;
+    display: flex; flex-direction: column; gap: 8px;
+    opacity: 0; transition: opacity .8s;
   }
-  .statement span {
-    color: rgba(255,255,255,0.6);
-    transition: color 1.5s;
+  .statement.show { opacity: 1; }
+  .statement p {
+    font-size: 15px; line-height: 1.7; color: var(--dim);
+    max-width: 560px; letter-spacing: 0.015em;
   }
-  .statement span.revealed { color: #fff; }
 
   /* ── SOCIAL ── */
-  .social {
-    display: flex; align-items: center; gap: 20px; flex-wrap: wrap;
+  .social-block {
+    opacity: 0; transition: opacity .8s .4s;
   }
-  .social a {
+  .social-block.show { opacity: 1; }
+  .social-label {
+    font-size: 10px; font-weight: 600; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--faint);
+    margin-bottom: 24px;
+  }
+  .social-row {
+    display: flex; flex-wrap: wrap; gap: 8px;
+  }
+  .social-link {
+    width: 44px; height: 44px; border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
-    width: 40px; height: 40px;
-    border-radius: 50%;
-    border: 1px solid rgba(255,255,255,0.08);
-    color: rgba(255,255,255,0.25);
-    transition: all .3s;
-    position: relative;
+    border: 1px solid var(--faint);
+    transition: border-color .3s, transform .3s, background .3s;
+    text-decoration: none; position: relative;
   }
-  .social a:hover {
-    border-color: rgba(255,255,255,0.3);
-    color: #fff;
-    background: rgba(255,255,255,0.04);
+  .social-link:hover {
+    border-color: rgba(255,255,255,0.5);
     transform: translateY(-2px);
+    background: rgba(255,255,255,0.03);
   }
-  .social a svg {
-    width: 18px; height: 18px;
-    fill: none; stroke: currentColor;
-    stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round;
-  }
-  .social .divider {
-    width: 1px; height: 20px;
-    background: rgba(255,255,255,0.06);
-    margin: 0 4px;
+  .social-link svg { width: 17px; height: 17px; }
+  .social-link svg path,
+  .social-link svg rect,
+  .social-link svg circle { fill: none; stroke: rgba(255,255,255,0.35); stroke-width: 1.2; }
+  .social-link:hover svg path,
+  .social-link:hover svg rect,
+  .social-link:hover svg circle { stroke: rgba(255,255,255,0.7); }
+
+  /* tooltip for wechat */
+  .social-link.wechat { cursor: default; }
+  .social-link.wechat:hover::after {
+    content: 'Kevph2026';
+    position: absolute; bottom: -28px; left: 50%; transform: translateX(-50%);
+    font-size: 10px; color: rgba(255,255,255,0.5); white-space: nowrap;
+    letter-spacing: 0.06em;
   }
 
-  @media (max-width: 768px) {
-    .page { padding: 0 28px; gap: 48px; }
-    .step .box { width: 68px; height: 52px; }
-    .step .box .label { font-size: 11px; }
-    .step .box .name { font-size: 8px; }
-    .connector { width: 24px; margin: 0 4px; }
-    .social { gap: 12px; }
-    .social a { width: 36px; height: 36px; }
-    .social a svg { width: 16px; height: 16px; }
+  /* ── BOTTOM ── */
+  .bottom-line {
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 10px; color: var(--faint); letter-spacing: 0.06em;
+  }
+  .bottom-line .divider { color: rgba(255,255,255,0.08); margin: 0 12px; }
+
+  @media (max-width: 500px) {
+    .page { padding: 40px 24px; gap: 48px; }
+    .card { width: 70px; height: 56px; }
+    .card .icon { font-size: 14px; }
+    .card .name { font-size: 8px; }
+    .connector { width: 16px; }
   }
 </style>
 </head>
@@ -163,133 +176,122 @@
 
 <div class="page">
 
-  <div class="title-block">
-    <div class="tag">Focus · AI-Native & Agent Products</div>
+  <!-- HEADLINE -->
+  <div class="headline-block">
+    <div class="tag">Focus · AI‑Native &amp; Agent Products</div>
     <div class="headline">
-      I don't just<br>create <span class="hl" id="hl">code</span>.
+      I don't just create<br>
+      <span class="swap" id="swap">
+        <span class="w off" id="wordCode">code</span>
+        <span class="w init" id="wordProducts">products</span>
+      </span>.
     </div>
+    <div class="subtitle">Business plan before the first commit. Always.</div>
   </div>
 
+  <!-- PIPELINE -->
   <div class="pipeline" id="pipeline">
-    <div class="step" data-id="0">
-      <div class="box"><div class="label">BP</div><div class="name">Business Plan</div></div>
-    </div>
-    <div class="connector"><div></div></div>
-    <div class="step" data-id="1">
-      <div class="box"><div class="label">BRD</div><div class="name">Requirements</div></div>
-    </div>
-    <div class="connector"><div></div></div>
-    <div class="step" data-id="2">
-      <div class="box"><div class="label">R</div><div class="name">Research</div></div>
-    </div>
-    <div class="connector"><div></div></div>
-    <div class="step" data-id="3">
-      <div class="box"><div class="label">{ }</div><div class="name">Code</div></div>
-    </div>
+    <div class="step-wrap" data-step="0"><div class="card"><div class="icon">📋</div><div class="name">BP</div></div></div>
+    <div class="connector" data-step="0"></div>
+    <div class="step-wrap" data-step="1"><div class="card"><div class="icon">📐</div><div class="name">BRD</div></div></div>
+    <div class="connector" data-step="1"></div>
+    <div class="step-wrap" data-step="2"><div class="card"><div class="icon">🔬</div><div class="name">RESEARCH</div></div></div>
+    <div class="connector" data-step="2"></div>
+    <div class="step-wrap" data-step="3"><div class="card"><div class="icon">{ }</div><div class="name">CODE</div></div></div>
   </div>
 
+  <!-- STATEMENT -->
   <div class="statement" id="statement">
-    <span>Every repo ships as a complete commercial proposition.</span><br>
-    <span>I create products & business models.</span>
+    <p>15 years in cross-border. Now building AI products where Agent architecture reshapes how business gets done — not demos, not wrappers, not hype.</p>
+    <p>Every repo I ship is a complete commercial proposition. Code is just one component.</p>
   </div>
 
-  <div class="social">
-    <!-- Email -->
-    <a href="mailto:k@superk.ai" title="Email">
-      <svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 4L12 13 2 4"/></svg>
-    </a>
+  <!-- SOCIAL -->
+  <div class="social-block" id="social">
+    <div class="social-label">Connect</div>
+    <div class="social-row">
+      <!-- Email -->
+      <a class="social-link" href="mailto:kiven1026@gmail.com" title="Email">
+        <svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 7l10 7 10-7"/></svg>
+      </a>
+      <!-- WeChat -->
+      <span class="social-link wechat" title="WeChat: Kevph2026">
+        <svg viewBox="0 0 24 24"><path d="M8.5 11a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zM15.5 11a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"/><path d="M6.5 4C3.46 4 1 6.24 1 9c0 1.54.73 2.9 1.87 3.8L2 15l2.54-1.27C5.34 13.9 6.16 14 7 14"/><path d="M17.5 10c3.04 0 5.5 2.24 5.5 5 0 1.54-.73 2.9-1.87 3.8L22 21l-2.54-1.27A5.8 5.8 0 0 1 17 20c-3.04 0-5.5-2.24-5.5-5s2.46-5 5.5-5z"/></svg>
+      </span>
+      <!-- Twitter/X -->
+      <a class="social-link" href="https://x.com/skyerK12" target="_blank" title="Twitter">
+        <svg viewBox="0 0 24 24"><path d="M4 4l6.5 8.7L3.7 20h1.5l5.7-6.6L15.5 20H20l-6.8-9.1L19.4 4h-1.5l-5.4 6.3L8.5 4H4z"/></svg>
+      </a>
+      <!-- LinkedIn -->
+      <a class="social-link" href="https://www.linkedin.com/in/kevin-zhu-8830607b" target="_blank" title="LinkedIn">
+        <svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><circle cx="7" cy="10" r="1.5"/><path d="M5.5 14h3v-6h-3zM10 14h2.5v-3.5a1.5 1.5 0 0 1 3 0V14H18v-4a4 4 0 0 0-8 0v4z"/></svg>
+      </a>
+      <!-- Substack -->
+      <a class="social-link" href="https://thesuperk.substack.com" target="_blank" title="Substack">
+        <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 10h10M7 14h10"/></svg>
+      </a>
+      <!-- Website -->
+      <a class="social-link" href="https://superk.ai" target="_blank" title="Website">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3.5 12h17M12 3.5a15 15 0 0 1 0 17M12 3.5a15 15 0 0 0 0 17"/></svg>
+      </a>
+      <!-- Bonjour -->
+      <a class="social-link" href="https://bonjour.bio/kev" target="_blank" title="Bonjour">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12h8M12 8v8"/></svg>
+      </a>
+      <!-- 小红书 -->
+      <a class="social-link" href="https://www.xiaohongshu.com/user/profile/670f7fc2000000000d0279e5" target="_blank" title="小红书">
+        <svg viewBox="0 0 24 24"><rect x="3" y="2" width="18" height="20" rx="3"/><path d="M7 7l5 6-3 5M12 7l3 3-2 4"/></svg>
+      </a>
+      <!-- 抖音 -->
+      <a class="social-link" href="https://www.douyin.com/user/Mr.K在路上" target="_blank" title="抖音: Mr.K在路上">
+        <svg viewBox="0 0 24 24"><path d="M18 5v6a6 6 0 0 1-6 6 6 6 0 0 1-6-6 6 6 0 0 1 6-6h1v4a3 3 0 0 0-1-0.5 2 2 0 1 0 2 2.5V5h4z"/></svg>
+      </a>
+    </div>
+  </div>
 
-    <!-- WeChat -->
-    <a href="#" title="WeChat: KevPH" onclick="return false">
-      <svg viewBox="0 0 24 24"><path d="M8.5 11a1.5 1.5 0 100-3 1.5 1.5 0 000 3zM15.5 11a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"/><path d="M20 13c0 4.4-4 8-8 8-1 0-2-.2-2.8-.5L6 21.5l1-2.6C5.4 17.8 4 15.7 4 13c0-4.4 4-8 8-8s8 3.6 8 8z"/></svg>
-    </a>
-
-    <span class="divider"></span>
-
-    <!-- Twitter/X -->
-    <a href="https://x.com/" title="Twitter">
-      <svg viewBox="0 0 24 24"><path d="M4 4l7.5 10L4 20h2l6-7 4.5 7H22l-8-10.5L20.5 4h-2l-5.5 6.5L9 4H4z"/></svg>
-    </a>
-
-    <!-- LinkedIn -->
-    <a href="https://linkedin.com/in/" title="LinkedIn">
-      <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="18" rx="3"/><line x1="7" y1="9.5" x2="7" y2="17"/><line x1="11.5" y1="13" x2="11.5" y2="17"/><line x1="11.5" y1="9.5" x2="11.5" y2="11"/><circle cx="7" cy="6.5" r="1.5"/><path d="M14.5 17v-3.5a2 2 0 014 0V17"/></svg>
-    </a>
-
-    <!-- Facebook -->
-    <a href="https://facebook.com/" title="Facebook">
-      <svg viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3V2z"/></svg>
-    </a>
-
-    <span class="divider"></span>
-
-    <!-- WhatsApp -->
-    <a href="https://wa.me/" title="WhatsApp">
-      <svg viewBox="0 0 24 24"><path d="M3 21l1.65-4.85A9 9 0 013 12a9 9 0 1110.35 8.85L21 21l-4.85-1.65A9 9 0 013 21z"/><path d="M9 10a.5.5 0 01.5.5 2.5 2.5 0 002.5 2.5.5.5 0 010 1 3.5 3.5 0 01-3.5-3.5.5.5 0 01.5-.5z"/><path d="M9.5 10a2.5 2.5 0 015 0v2a.5.5 0 01-1 0v-2a1.5 1.5 0 00-3 0v2a.5.5 0 01-1 0v-2z"/><path d="M11.5 14.5v1a.5.5 0 001 0v-1a.5.5 0 00-1 0z"/></svg>
-    </a>
-
-    <!-- 抖音 -->
-    <a href="https://douyin.com/" title="抖音">
-      <svg viewBox="0 0 24 24"><path d="M18 6V4h-2.5a4.5 4.5 0 01-4.5 4.5V11a6 6 0 006-6h-2.5a3.5 3.5 0 013.5-3.5V4"/><path d="M9 14a3.5 3.5 0 100 7 3.5 3.5 0 000-7zm0 5.5a2 2 0 110-4 2 2 0 010 4z"/></svg>
-    </a>
-
-    <span class="divider"></span>
-
-    <!-- 小红书 -->
-    <a href="https://xiaohongshu.com/" title="小红书">
-      <svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="M8 12l2.5-2.5L13 12l2.5-2.5L18 12"/><path d="M10 16h4"/></svg>
-    </a>
-
-    <span style="margin-left:auto;font-size:10px;letter-spacing:0.1em;color:rgba(255,255,255,0.12)">KevPH · Beijing</span>
+  <!-- BOTTOM LINE -->
+  <div class="bottom-line">
+    <span>KevPH<span class="divider">·</span>Beijing</span>
+    <span>BP → BRD → R → { }</span>
   </div>
 
 </div>
 
 <script>
-const steps = document.querySelectorAll('.step');
-const connectors = document.querySelectorAll('.connector');
-const hl = document.getElementById('hl');
-const stmt = document.querySelectorAll('#statement span');
-let idx = -1, dir = 1, paused = false;
+(function() {
+  const steps = document.querySelectorAll('.step-wrap');
+  const connectors = document.querySelectorAll('.connector');
+  const swapCode = document.getElementById('wordCode');
+  const swapProducts = document.getElementById('wordProducts');
+  const statement = document.getElementById('statement');
+  const social = document.getElementById('social');
 
-function tick() {
-  steps.forEach(s => { s.classList.remove('show','current'); });
-  connectors.forEach(c => c.classList.remove('done'));
-
-  for (let i = 0; i <= idx && i < steps.length; i++) {
-    steps[i].classList.add('show');
-    if (i < idx) connectors[i]?.classList.add('done');
-  }
-  if (idx >= 0 && idx < steps.length) {
-    steps[idx].classList.add('current');
-  }
-
-  if (idx === steps.length - 1 && dir === 1) {
-    hl.textContent = 'products';
-    hl.classList.add('on');
-    stmt.forEach(s => s.classList.add('revealed'));
-    paused = true;
-    setTimeout(() => {
-      dir = -1; paused = false;
-      hl.classList.remove('on');
-      stmt.forEach(s => s.classList.remove('revealed'));
-      tick();
-    }, 2500);
-    return;
-  }
-
-  if (idx <= 0 && dir === -1) {
-    hl.textContent = 'code';
-    dir = 1; idx = -1;
-    setTimeout(tick, 500);
-    return;
+  // Phase 1: reveal pipeline cards one by one
+  let i = 0;
+  function revealCard() {
+    if (i >= steps.length) {
+      // All cards shown → swap text
+      swapCode.classList.add('off');
+      swapProducts.classList.remove('init');
+      swapProducts.classList.add('on');
+      // Show statement & social after swap
+      setTimeout(() => {
+        statement.classList.add('show');
+        social.classList.add('show');
+      }, 500);
+      return;
+    }
+    steps[i].classList.add('visible');
+    if (i > 0 && connectors[i-1]) {
+      connectors[i-1].classList.add('lit');
+    }
+    i++;
+    setTimeout(revealCard, 550);
   }
 
-  idx += dir;
-  setTimeout(tick, dir === 1 ? 450 : 200);
-}
-tick();
+  // Start after a short delay
+  setTimeout(revealCard, 600);
+})();
 </script>
-
 </body>
 </html>
