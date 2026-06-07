@@ -6,329 +6,358 @@
 <title>K — Products, not code.</title>
 <style>
   :root {
-    --bg: #06080c;
-    --t1: #e6edf3;
-    --t2: #8b949e;
-    --t3: #484f58;
-    --accent: #4da6ff;
-    --purple: #a371f7;
-    --green: #3fb950;
-    --red: #f85149;
+    --bg: #080a0c;
+    --blue: #4da6ff;
+    --violet: #a371f7;
     --amber: #d2991d;
+    --green: #3fb950;
+    --grid: rgba(77,166,255,0.06);
+    --concrete: #0d1014;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   body {
     background: var(--bg);
-    color: var(--t2);
+    color: #8b949e;
     font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'SF Pro Display', sans-serif;
-    line-height: 1.6;
     overflow-x: hidden;
+    cursor: default;
   }
 
-  /* ── Noise overlay ── */
-  body::after {
-    content: '';
-    position: fixed; inset: 0; z-index: 9999; pointer-events: none; opacity: 0.03;
-    background: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  /* ── Concrete texture overlay ── */
+  .texture {
+    position: fixed; inset: 0; z-index: 9998; pointer-events: none; opacity: 0.04;
+    background: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='5' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* ── Scanlines ── */
+  .scanlines {
+    position: fixed; inset: 0; z-index: 9997; pointer-events: none; opacity: 0.03;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.3) 2px, rgba(0,0,0,0.3) 4px);
+  }
+
+  /* ── GRID FLOOR ── */
+  .grid-floor {
+    position: fixed; bottom: 0; left: 0; right: 0; height: 40vh; z-index: 0;
+    perspective: 600px; overflow: hidden; pointer-events: none;
+  }
+  .grid-floor-inner {
+    position: absolute; bottom: -60%; left: 50%; transform: translateX(-50%) rotateX(60deg);
+    width: 200vw; height: 200vw;
+    background-image:
+      linear-gradient(rgba(77,166,255,0.08) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(77,166,255,0.08) 1px, transparent 1px);
+    background-size: 60px 60px;
+    animation: gridPulse 4s ease-in-out infinite;
+    mask-image: linear-gradient(to top, rgba(0,0,0,0.4) 0%, transparent 100%);
+  }
+  @keyframes gridPulse {
+    0%, 100% { opacity: 0.6; background-size: 60px 60px; }
+    50% { opacity: 1; background-size: 62px 62px; }
+  }
+
+  /* ── FLOATING PARTICLES ── */
+  .particles {
+    position: fixed; inset: 0; z-index: 1; pointer-events: none; overflow: hidden;
+  }
+  .particle {
+    position: absolute;
+    width: 2px; height: 2px;
+    background: var(--blue);
+    border-radius: 50%;
+    animation: floatUp linear infinite;
+    opacity: 0;
+  }
+  @keyframes floatUp {
+    0% { transform: translateY(100vh) scale(0); opacity: 0; }
+    10% { opacity: 0.8; }
+    90% { opacity: 0.2; }
+    100% { transform: translateY(-10vh) scale(1.5); opacity: 0; }
   }
 
   /* ── HERO ── */
   .hero {
-    min-height: 100vh;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    position: relative; padding: 60px 24px; text-align: center;
-  }
-  .hero-bg {
-    position: absolute; inset: 0;
-    background: radial-gradient(ellipse 80% 60% at 50% 40%, rgba(77,166,255,0.06) 0%, transparent 60%),
-                radial-gradient(ellipse 40% 50% at 80% 70%, rgba(163,113,247,0.04) 0%, transparent 50%);
+    min-height: 100vh; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    position: relative; z-index: 2; padding: 60px 24px; text-align: center;
   }
 
-  .hero h1 {
-    font-size: clamp(36px, 8vw, 72px);
-    font-weight: 900; color: var(--t1);
-    letter-spacing: -0.03em; line-height: 1.1;
-    max-width: 800px; position: relative; z-index: 1;
+  /* TITLE */
+  .title-block { position: relative; z-index: 2; margin-bottom: 48px; }
+  .title-line {
+    font-size: clamp(36px, 7vw, 68px);
+    font-weight: 900; color: #e6edf3;
+    letter-spacing: -0.03em; line-height: 1.05;
+    text-transform: uppercase;
   }
-  .hero h1 mark {
-    background: linear-gradient(135deg, var(--accent) 0%, var(--purple) 100%);
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  .title-line mark {
+    background: none; color: transparent;
+    -webkit-text-stroke: 1px var(--blue);
+    transition: all .8s;
   }
-  .hero .punch {
-    font-size: clamp(16px, 3vw, 22px);
-    color: var(--t2); font-weight: 500;
-    margin-top: 16px; position: relative; z-index: 1;
+  .title-line mark.glow {
+    -webkit-text-stroke: 0;
+    background: linear-gradient(135deg, var(--blue), var(--violet));
+    -webkit-background-clip: text;
+    filter: drop-shadow(0 0 18px rgba(77,166,255,0.5));
+  }
+  .title-sub {
+    font-size: clamp(14px, 2.5vw, 18px);
+    color: #484f58; font-weight: 500; margin-top: 12px;
+    letter-spacing: 0.06em; text-transform: uppercase;
   }
 
   /* ── PIPELINE ── */
-  .pipeline-wrap {
-    position: relative; z-index: 1;
-    margin-top: 64px; width: 100%; max-width: 700px;
-  }
   .pipeline {
     display: flex; align-items: center; justify-content: center;
-    gap: 0; flex-wrap: wrap;
+    gap: 0; position: relative; z-index: 2;
   }
   .p-node {
     display: flex; flex-direction: column; align-items: center;
-    width: 100px; position: relative;
+    width: 110px; position: relative;
+    transition: transform .4s cubic-bezier(.34,1.56,.64,1);
   }
-  .p-node .icon {
-    width: 56px; height: 56px; border-radius: 16px;
+  .p-node .box {
+    width: 64px; height: 64px;
+    border: 2px solid rgba(77,166,255,0.15);
+    background: rgba(77,166,255,0.03);
     display: flex; align-items: center; justify-content: center;
-    font-size: 16px; font-weight: 800; letter-spacing: 0.02em;
+    font-size: 15px; font-weight: 800; letter-spacing: 0.03em;
+    color: rgba(77,166,255,0.3);
     position: relative;
-    transition: transform .3s, box-shadow .3s;
+    transition: all .6s;
+    clip-path: polygon(10% 0%, 100% 0%, 90% 100%, 0% 100%);
   }
-  .p-node .icon::after {
+  .p-node .box::after {
     content: '';
-    position: absolute; inset: -2px; border-radius: 18px;
-    opacity: 0; transition: opacity .4s;
+    position: absolute; inset: -2px;
+    clip-path: polygon(10% 0%, 100% 0%, 90% 100%, 0% 100%);
+    opacity: 0; transition: opacity .6s;
   }
-  .p-node:hover .icon { transform: scale(1.08); }
   .p-node .label {
-    font-size: 11px; font-weight: 700; text-transform: uppercase;
-    letter-spacing: 0.06em; margin-top: 10px;
+    font-size: 10px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.08em; margin-top: 12px;
+    color: rgba(77,166,255,0.2); transition: color .6s;
   }
-  .p-node .sub {
-    font-size: 10px; color: var(--t3); text-transform: uppercase;
-    letter-spacing: 0.04em; margin-top: 2px;
-  }
-
-  .pn-bp .icon { background: rgba(77,166,255,0.1); color: var(--accent); border: 1px solid rgba(77,166,255,0.2); }
-  .pn-bp .label { color: var(--accent); }
-  .pn-brd .icon { background: rgba(163,113,247,0.1); color: var(--purple); border: 1px solid rgba(163,113,247,0.2); }
-  .pn-brd .label { color: var(--purple); }
-  .pn-research .icon { background: rgba(210,153,29,0.1); color: var(--amber); border: 1px solid rgba(210,153,29,0.2); }
-  .pn-research .label { color: var(--amber); }
-  .pn-code .icon { background: rgba(63,185,80,0.1); color: var(--green); border: 1px solid rgba(63,185,80,0.2); }
-  .pn-code .label { color: var(--green); }
-
-  .p-arrow {
-    font-size: 20px; color: var(--t3); margin: 0 -8px;
-    position: relative; top: -12px;
+  .p-node .sublabel {
+    font-size: 9px; color: #21262d; text-transform: uppercase;
+    letter-spacing: 0.06em; margin-top: 2px; transition: color .6s;
   }
 
-  /* ── DIFF SECTION ── */
-  .section { max-width: 840px; margin: 0 auto; padding: 80px 24px; }
-  .diff-box {
-    background: #0d1117;
-    border: 1px solid #21262d;
-    border-radius: 12px;
-    overflow: hidden;
-    font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
-    font-size: 13px; line-height: 1.7;
-    box-shadow: 0 0 60px rgba(77,166,255,0.03);
+  /* Connector lines */
+  .p-connector {
+    width: 48px; height: 2px;
+    background: rgba(77,166,255,0.08);
+    position: relative; top: -12px; margin: 0 -4px;
+    transition: all .6s;
   }
-  .diff-header {
-    padding: 12px 18px;
-    background: #161b22;
-    border-bottom: 1px solid #21262d;
-    display: flex; gap: 16px;
-    font-size: 12px;
-  }
-  .diff-header span { color: var(--t3); }
-  .diff-header .file-a { color: var(--t2); }
-  .diff-header .file-b { color: var(--t1); font-weight: 600; }
-  .diff-body {
-    padding: 0;
-    max-height: 600px; overflow-y: auto;
-  }
-  .diff-line {
-    display: flex; padding: 0 18px;
-    min-height: 28px; align-items: center;
-  }
-  .diff-line .ln {
-    width: 44px; text-align: right; padding-right: 12px;
-    font-size: 11px; color: var(--t3); flex-shrink: 0; user-select: none;
-  }
-  .diff-line .sign {
-    width: 18px; text-align: center; flex-shrink: 0;
-    font-weight: 700; font-size: 13px;
-  }
-  .diff-add { background: rgba(63,185,80,0.06); }
-  .diff-add .sign { color: var(--green); }
-  .diff-add .ln { color: rgba(63,185,80,0.6); }
-  .diff-del { background: rgba(248,81,73,0.06); }
-  .diff-del .sign { color: var(--red); }
-  .diff-del .ln { color: rgba(248,81,73,0.6); }
-  .diff-ctx { color: var(--t3); }
-  .diff-line .content { flex: 1; }
-  .diff-add .content { color: #7ee787; }
-  .diff-del .content { color: #ffa198; }
-  .diff-ctx .content { color: var(--t3); }
-
-  /* ── QUOTE ── */
-  .quote-section { padding: 80px 24px; text-align: center; position: relative; }
-  .quote-section blockquote {
-    font-size: clamp(20px, 4vw, 32px);
-    font-weight: 700; color: var(--t1);
-    max-width: 600px; margin: 0 auto;
-    line-height: 1.4; letter-spacing: -0.01em;
-    position: relative; z-index: 1;
-  }
-  .quote-section blockquote::before {
-    content: '"';
-    position: absolute; left: -40px; top: -10px;
-    font-size: 80px; color: var(--accent); opacity: 0.15;
-    font-family: Georgia, serif; line-height: 1;
-  }
-  .quote-section .attr {
-    font-size: 13px; color: var(--t3); margin-top: 16px;
-    letter-spacing: 0.04em; text-transform: uppercase;
+  .p-connector::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(90deg, var(--blue), var(--violet));
+    opacity: 0; transition: opacity .6s;
   }
 
-  /* ── STATS ── */
-  .stats {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1px;
-    background: #21262d;
-    border-radius: 12px; overflow: hidden;
-    max-width: 600px; margin: 0 auto;
+  /* Active states */
+  .p-node.active .box {
+    border-color: var(--blue);
+    background: rgba(77,166,255,0.1);
+    color: var(--blue);
+    box-shadow: 0 0 30px rgba(77,166,255,0.3), inset 0 0 20px rgba(77,166,255,0.05);
   }
-  .stat {
-    background: #0d1117;
-    padding: 28px 20px; text-align: center;
+  .p-node.active .label { color: var(--blue); }
+  .p-node.active .sublabel { color: #484f58; }
+  .p-node.active + .p-connector::after,
+  .p-connector.active::after { opacity: 1; }
+
+  /* Code node special */
+  .p-node.code-node .box {
+    border-color: rgba(63,185,80,0.2);
+    color: rgba(63,185,80,0.3);
   }
-  .stat .num {
-    font-size: 36px; font-weight: 900; color: var(--t1);
-    letter-spacing: -0.02em;
+  .p-node.code-node.active .box {
+    border-color: var(--green);
+    color: var(--green);
+    box-shadow: 0 0 30px rgba(63,185,80,0.3), inset 0 0 20px rgba(63,185,80,0.05);
   }
-  .stat .num span { color: var(--accent); }
-  .stat .lbl {
-    font-size: 11px; color: var(--t3); text-transform: uppercase;
-    letter-spacing: 0.06em; margin-top: 6px;
+  .p-node.code-node.active .label { color: var(--green); }
+
+  /* ── BOTTOM BAR ── */
+  .bottom-bar {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    z-index: 10; padding: 16px 24px;
+    display: flex; justify-content: center; gap: 20px;
+    border-top: 1px solid rgba(77,166,255,0.06);
+    background: rgba(8,10,12,0.8); backdrop-filter: blur(8px);
+  }
+  .bottom-bar a {
+    font-size: 11px; color: #484f58; text-decoration: none;
+    text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600;
+    transition: color .3s; padding: 4px 0;
+    border-bottom: 1px solid transparent;
+  }
+  .bottom-bar a:hover { color: var(--blue); border-bottom-color: var(--blue); }
+
+  /* ── AMBIENT GLOW ── */
+  .ambient {
+    position: fixed; z-index: 0; pointer-events: none;
+    width: 600px; height: 600px; border-radius: 50%;
+    filter: blur(120px); opacity: 0.08;
+  }
+  .ambient.a1 {
+    top: -200px; left: -100px;
+    background: var(--blue);
+    animation: ambientDrift 8s ease-in-out infinite;
+  }
+  .ambient.a2 {
+    bottom: -200px; right: -100px;
+    background: var(--violet);
+    animation: ambientDrift 10s ease-in-out infinite reverse;
+  }
+  @keyframes ambientDrift {
+    0%, 100% { transform: translate(0, 0); }
+    33% { transform: translate(40px, -30px); }
+    66% { transform: translate(-20px, 20px); }
   }
 
-  /* ── FOOTER ── */
-  .footer {
-    text-align: center; padding: 48px 24px; border-top: 1px solid #21262d;
-  }
-  .footer a {
-    color: var(--t2); text-decoration: none; font-size: 13px;
-    padding: 6px 16px; border: 1px solid #21262d; border-radius: 20px;
-    margin: 0 6px; transition: all .2s; display: inline-block; margin-bottom: 8px;
-  }
-  .footer a:hover { color: var(--t1); border-color: var(--accent); }
-  .footer .sig { font-size: 11px; color: var(--t3); margin-top: 16px; }
-
-  /* ── ANIMATIONS ── */
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(30px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  .reveal { animation: fadeUp .8s ease-out both; }
-  .reveal:nth-child(2) { animation-delay: .15s; }
-  .reveal:nth-child(3) { animation-delay: .3s; }
-
+  /* ── RESPONSIVE ── */
   @media (max-width: 640px) {
-    .pipeline { gap: 0; }
-    .p-node { width: 72px; }
-    .p-node .icon { width: 44px; height: 44px; font-size: 13px; border-radius: 12px; }
-    .p-arrow { font-size: 14px; margin: 0 -6px; }
-    .stats { grid-template-columns: 1fr; }
-    .diff-line { font-size: 11px; padding: 0 10px; }
-    .diff-line .ln { width: 30px; padding-right: 6px; }
+    .pipeline { flex-wrap: wrap; gap: 8px; }
+    .p-node { width: 70px; }
+    .p-node .box { width: 44px; height: 44px; font-size: 11px; }
+    .p-connector { display: none; }
+    .bottom-bar { gap: 12px; }
+    .bottom-bar a { font-size: 10px; }
   }
 </style>
 </head>
 <body>
 
-<!-- ═══ HERO ═══ -->
+<div class="texture"></div>
+<div class="scanlines"></div>
+<div class="grid-floor"><div class="grid-floor-inner"></div></div>
+
+<div class="ambient a1"></div>
+<div class="ambient a2"></div>
+
+<div class="particles" id="particles"></div>
+
 <div class="hero">
-  <div class="hero-bg"></div>
-  <h1 class="reveal">I ship <mark>products</mark>,<br>not just code.</h1>
-  <p class="punch reveal">Every repo is a complete commercial proposition.</p>
+  <div class="title-block">
+    <div class="title-line">I DON'T JUST</div>
+    <div class="title-line">CREATE <mark id="titleMark">CODE</mark></div>
+    <div class="title-sub">Every repo ships as a complete commercial proposition</div>
+  </div>
 
-  <div class="pipeline-wrap reveal">
-    <div class="pipeline">
-      <div class="p-node pn-bp">
-        <div class="icon">BP</div>
-        <div class="label">Business Plan</div>
-        <div class="sub">Strategy</div>
-      </div>
-      <div class="p-arrow">→</div>
-      <div class="p-node pn-brd">
-        <div class="icon">BRD</div>
-        <div class="label">Requirements</div>
-        <div class="sub">Spec</div>
-      </div>
-      <div class="p-arrow">→</div>
-      <div class="p-node pn-research">
-        <div class="icon">R</div>
-        <div class="label">Research</div>
-        <div class="sub">Deep Dive</div>
-      </div>
-      <div class="p-arrow">→</div>
-      <div class="p-node pn-code">
-        <div class="icon">{ }</div>
-        <div class="label">Code</div>
-        <div class="sub">Execution</div>
-      </div>
+  <div class="pipeline" id="pipeline">
+    <div class="p-node" data-id="0">
+      <div class="box">BP</div>
+      <div class="label">Business Plan</div>
+      <div class="sublabel">Strategy</div>
+    </div>
+    <div class="p-connector"></div>
+    <div class="p-node" data-id="1">
+      <div class="box">BRD</div>
+      <div class="label">Requirements</div>
+      <div class="sublabel">Spec</div>
+    </div>
+    <div class="p-connector"></div>
+    <div class="p-node" data-id="2">
+      <div class="box">R</div>
+      <div class="label">Research</div>
+      <div class="sublabel">Deep Dive</div>
+    </div>
+    <div class="p-connector"></div>
+    <div class="p-node code-node" data-id="3">
+      <div class="box">{ }</div>
+      <div class="label">Code</div>
+      <div class="sublabel">Execution</div>
     </div>
   </div>
 </div>
 
-<!-- ═══ DIFF ═══ -->
-<div class="section">
-  <div class="diff-box">
-    <div class="diff-header">
-      <span>Comparing changes</span>
-      <span class="file-a">typical-repo/README.md</span>
-      <span>→</span>
-      <span class="file-b">my-repo/</span>
-    </div>
-    <div class="diff-body">
-      <div class="diff-line diff-ctx"><span class="ln">1</span><span class="sign"></span><span class="content"># Project Name</span></div>
-      <div class="diff-line diff-ctx"><span class="ln">2</span><span class="sign"></span><span class="content">A thing that does a thing.</span></div>
-      <div class="diff-line diff-ctx"><span class="ln">3</span><span class="sign"></span><span class="content"></span></div>
-      <div class="diff-line diff-ctx"><span class="ln">4</span><span class="sign"></span><span class="content">## Install</span></div>
-      <div class="diff-line diff-del"><span class="ln">5</span><span class="sign">-</span><span class="content">npm install && npm start</span></div>
-      <div class="diff-line diff-del"><span class="ln">6</span><span class="sign">-</span><span class="content"></span></div>
-      <div class="diff-line diff-del"><span class="ln">7</span><span class="sign">-</span><span class="content">That's it. That's the repo.</span></div>
-      <div class="diff-line diff-add"><span class="ln">5</span><span class="sign">+</span><span class="content">📋 BP.md — Business plan. Market size, competitors, revenue model.</span></div>
-      <div class="diff-line diff-add"><span class="ln">6</span><span class="sign">+</span><span class="content">📐 BRD.md — User personas, journey maps, functional spec.</span></div>
-      <div class="diff-line diff-add"><span class="ln">7</span><span class="sign">+</span><span class="content">🔬 RESEARCH.md — 52K LOC deep-dive, architecture analysis, risk assessment.</span></div>
-      <div class="diff-line diff-add"><span class="ln">8</span><span class="sign">+</span><span class="content">💻 src/ — The code. Last. On purpose.</span></div>
-      <div class="diff-line diff-add"><span class="ln">9</span><span class="sign">+</span><span class="content"></span></div>
-      <div class="diff-line diff-add"><span class="ln">10</span><span class="sign">+</span><span class="content">Strategy is the product. Code is execution.</span></div>
-    </div>
-  </div>
-</div>
-
-<!-- ═══ STATS ═══ -->
-<div class="section" style="padding-top:0">
-  <div class="stats">
-    <div class="stat">
-      <div class="num"><span>15</span>+</div>
-      <div class="lbl">Years in Cross-Border</div>
-    </div>
-    <div class="stat">
-      <div class="num"><span>4</span>×</div>
-      <div class="lbl">Deliverables per Repo</div>
-    </div>
-    <div class="stat">
-      <div class="num"><span>1</span></div>
-      <div class="lbl">Focus · AI Agent Products</div>
-    </div>
-  </div>
-</div>
-
-<!-- ═══ QUOTE ═══ -->
-<div class="quote-section">
-  <blockquote>The closer you build to the money, the less you worry about the market.</blockquote>
-  <div class="attr">— My operating principle</div>
-</div>
-
-<!-- ═══ FOOTER ═══ -->
-<div class="footer">
+<div class="bottom-bar">
   <a href="https://github.com/KevPH2026">GitHub</a>
   <a href="https://kevph2026.github.io/VibeCut/">VibeCut</a>
   <a href="mailto:k@superk.ai">Email</a>
-  <div class="sig">KevPH · Beijing</div>
+  <span style="font-size:10px;color:#21262d;letter-spacing:0.06em">KevPH · Beijing</span>
 </div>
 
+<script>
+// ── Pipeline animation ──
+const nodes = document.querySelectorAll('.p-node');
+const connectors = document.querySelectorAll('.p-connector');
+const titleMark = document.getElementById('titleMark');
+let activeIndex = -1;
+let direction = 1;
+
+function animatePipeline() {
+  // Deactivate all
+  nodes.forEach(n => n.classList.remove('active'));
+  connectors.forEach(c => c.classList.remove('active'));
+
+  // Activate current
+  if (activeIndex >= 0 && activeIndex < nodes.length) {
+    nodes[activeIndex].classList.add('active');
+    if (activeIndex > 0) connectors[activeIndex - 1].classList.add('active');
+  }
+
+  // Last node triggers title change
+  if (activeIndex === nodes.length - 1) {
+    titleMark.textContent = 'PRODUCTS';
+    titleMark.classList.add('glow');
+  }
+
+  activeIndex += direction;
+  if (activeIndex >= nodes.length) {
+    direction = -1;
+    activeIndex = nodes.length - 1;
+    // Pause at full pipeline
+    setTimeout(() => {
+      titleMark.textContent = 'CODE';
+      titleMark.classList.remove('glow');
+      animatePipeline();
+    }, 1500);
+    return;
+  }
+  if (activeIndex < 0) {
+    direction = 1;
+    activeIndex = 0;
+    titleMark.textContent = 'CODE';
+    titleMark.classList.remove('glow');
+    setTimeout(animatePipeline, 600);
+    return;
+  }
+
+  setTimeout(animatePipeline, 400);
+}
+
+animatePipeline();
+
+// ── Particles ──
+const container = document.getElementById('particles');
+for (let i = 0; i < 40; i++) {
+  const p = document.createElement('div');
+  p.className = 'particle';
+  p.style.left = Math.random() * 100 + '%';
+  p.style.animationDuration = (6 + Math.random() * 12) + 's';
+  p.style.animationDelay = Math.random() * 10 + 's';
+  p.style.width = (1 + Math.random() * 2) + 'px';
+  p.style.height = p.style.width;
+  if (Math.random() > 0.7) p.style.background = '#a371f7';
+  container.appendChild(p);
+}
+
+// ── Parallax grid on mouse ──
+document.addEventListener('mousemove', e => {
+  const x = (e.clientX / window.innerWidth - 0.5) * 10;
+  const y = (e.clientY / window.innerHeight - 0.5) * 10;
+  document.querySelector('.grid-floor-inner').style.transform =
+    `translateX(calc(-50% + ${x}px)) rotateX(60deg) translateY(${y}px)`;
+  document.querySelectorAll('.ambient').forEach((a, i) => {
+    a.style.transform = `translate(${x * (i+1) * 2}px, ${y * (i+1) * 2}px)`;
+  });
+});
+</script>
 </body>
 </html>
