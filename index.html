@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>K · Build with Intent</title>
+<title>K · Products, not just code</title>
 <style>
   :root {
     --bg: #080c12;
@@ -47,28 +47,25 @@
     animation: pulse 10s ease-in-out infinite;
   }
   @keyframes pulse { 0%, 100% { opacity: 0.6; } 50% { opacity: 1; } }
-  .hero-inner { position: relative; z-index: 1; max-width: 640px; }
+  .hero-inner { position: relative; z-index: 1; max-width: 680px; }
   .hero h1 {
-    font-size: 64px; font-weight: 800; color: var(--t1); letter-spacing: -0.03em; margin-bottom: 16px;
+    font-size: 56px; font-weight: 800; color: var(--t1); letter-spacing: -0.03em; margin-bottom: 20px;
+    line-height: 1.2;
   }
   .hero h1 span { background: linear-gradient(135deg, var(--accent), var(--purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-  .hero .tagline { font-size: 20px; color: var(--t2); font-weight: 500; margin-bottom: 32px; }
-
-  .formula {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    background: var(--s1);
-    border: 1px solid var(--s3);
-    border-radius: 10px;
-    padding: 16px 28px;
-    font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
-    font-size: 14px;
-    color: var(--t2);
-    letter-spacing: 0.02em;
+  .hero .sub {
+    font-size: 20px; color: var(--t2); font-weight: 500; margin-bottom: 10px;
   }
-  .formula b { color: var(--accent); font-weight: 600; }
-  .formula i { color: var(--t3); font-style: normal; }
+  .hero .focus {
+    display: inline-block;
+    font-size: 13px; color: var(--accent);
+    background: rgba(77,166,255,0.08);
+    border: 1px solid rgba(77,166,255,0.15);
+    border-radius: 20px;
+    padding: 6px 18px;
+    letter-spacing: 0.03em;
+    margin-top: 24px;
+  }
 
   .section {
     max-width: 720px;
@@ -85,56 +82,53 @@
     border: 1px solid var(--s3);
     border-radius: var(--r);
     overflow: hidden;
-    margin-bottom: 48px;
+    margin-bottom: 56px;
   }
   .diff-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
   }
   .diff-col {
-    padding: 28px 24px;
+    padding: 32px 28px;
   }
   .diff-col:first-child { border-right: 1px solid var(--s3); }
   .diff-label {
     font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em;
-    margin-bottom: 14px; font-weight: 700;
+    margin-bottom: 16px; font-weight: 700;
   }
   .diff-col:first-child .diff-label { color: var(--t3); }
   .diff-col:last-child .diff-label { color: var(--accent); }
   .diff-item {
     font-size: 13px;
-    padding: 5px 0;
+    padding: 6px 0;
     color: var(--t2);
     display: flex;
     align-items: flex-start;
-    gap: 8px;
+    gap: 10px;
+    line-height: 1.6;
   }
-  .diff-item .mark { font-size: 11px; flex-shrink: 0; margin-top: 2px; }
+  .diff-item .mark { font-size: 11px; flex-shrink: 0; margin-top: 3px; }
   .diff-col:first-child .mark { color: var(--t3); }
   .diff-col:last-child .mark { color: var(--accent); }
 
+  .about { text-align: center; }
   .about p {
-    font-size: 15px; color: var(--t2); margin-bottom: 16px;
-    text-align: center;
+    font-size: 15px; color: var(--t2); margin-bottom: 14px;
   }
   .about p strong { color: var(--t1); }
 
-  .traits {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 14px;
-    margin: 40px 0;
+  .pillars { margin-top: 44px; }
+  .pillar {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 20px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
   }
-  .trait {
-    background: var(--s1);
-    border: 1px solid var(--s3);
-    border-radius: var(--r);
-    padding: 24px 20px;
-    text-align: center;
-  }
-  .trait .ti { font-size: 28px; margin-bottom: 10px; }
-  .trait .tt { font-size: 15px; font-weight: 700; color: var(--t1); margin-bottom: 6px; }
-  .trait .td { font-size: 12px; color: var(--t3); line-height: 1.6; }
+  .pillar:last-child { border-bottom: none; }
+  .pillar .pi { font-size: 22px; flex-shrink: 0; width: 36px; text-align: center; }
+  .pillar .pt { font-size: 15px; font-weight: 700; color: var(--t1); margin-bottom: 4px; }
+  .pillar .pd { font-size: 13px; color: var(--t3); line-height: 1.6; }
 
   .belief {
     background: var(--s1);
@@ -142,7 +136,7 @@
     border-left: 3px solid var(--accent);
     border-radius: 0 var(--r) var(--r) 0;
     padding: 22px 28px;
-    margin-top: 40px;
+    margin-top: 48px;
     text-align: center;
   }
   .belief p { font-size: 18px; font-weight: 600; color: var(--t1); }
@@ -152,7 +146,7 @@
     display: flex;
     justify-content: center;
     gap: 16px;
-    margin-top: 36px;
+    margin-top: 40px;
     flex-wrap: wrap;
   }
   .links a {
@@ -173,11 +167,9 @@
   }
 
   @media (max-width: 640px) {
-    .hero h1 { font-size: 40px; }
+    .hero h1 { font-size: 36px; }
     .diff-row { grid-template-columns: 1fr; }
     .diff-col:first-child { border-right: none; border-bottom: 1px solid var(--s3); }
-    .traits { grid-template-columns: 1fr; }
-    .formula { font-size: 12px; padding: 12px 18px; gap: 4px; }
   }
 </style>
 </head>
@@ -185,11 +177,9 @@
 
 <div class="hero">
   <div class="hero-inner">
-    <h1>Hey, I'm <span>K</span>.</h1>
-    <p class="tagline">I don't fork code. I fork products.</p>
-    <div class="formula">
-      <b>BP</b> <i>→</i> <b>BRD</b> <i>→</i> <b>Research</b> <i>→</i> <b>Build</b> <i>=</i> every repo
-    </div>
+    <h1>I don't just create code.<br>I create <span>products</span> & <span>business models</span>.</h1>
+    <p class="sub">Every repo ships as a complete commercial proposition.</p>
+    <div class="focus">Focused on AI-Native & AI Agent Products</div>
   </div>
 </div>
 
@@ -198,49 +188,61 @@
   <div class="diff">
     <div class="diff-row">
       <div class="diff-col">
-        <div class="diff-label">Most Forks</div>
-        <div class="diff-item"><span class="mark">○</span> Change a few lines, call it a day</div>
-        <div class="diff-item"><span class="mark">○</span> README ≈ "forked from X, made it better"</div>
-        <div class="diff-item"><span class="mark">○</span> No strategy, no market context</div>
-        <div class="diff-item"><span class="mark">○</span> Code is the only artifact</div>
+        <div class="diff-label">Typical GitHub Repo</div>
+        <div class="diff-item"><span class="mark">○</span> Code + README. That's it.</div>
+        <div class="diff-item"><span class="mark">○</span> No explanation of why this exists</div>
+        <div class="diff-item"><span class="mark">○</span> No market context, no revenue logic</div>
+        <div class="diff-item"><span class="mark">○</span> The artifact IS the code</div>
       </div>
       <div class="diff-col">
-        <div class="diff-label">My Forks</div>
-        <div class="diff-item"><span class="mark">●</span> Business plan before the first commit</div>
+        <div class="diff-label">My Repos</div>
+        <div class="diff-item"><span class="mark">●</span> Business plan before the first line of code</div>
         <div class="diff-item"><span class="mark">●</span> Market analysis. User personas. Revenue model.</div>
-        <div class="diff-item"><span class="mark">●</span> Every repo ships with BP + BRD + Research</div>
-        <div class="diff-item"><span class="mark">●</span> Code is just one of four deliverables</div>
+        <div class="diff-item"><span class="mark">●</span> Complete product & business model package</div>
+        <div class="diff-item"><span class="mark">●</span> Code is one component. Strategy is the product.</div>
       </div>
     </div>
   </div>
 
   <h2>Who I Am</h2>
   <div class="about">
-    <p><strong>15 年跨境营销。</strong>从 Google Ads 投放到 AI 交付体系，从平台电商到 DTC。运营出身，不懂代码——但这恰好是我的优势：我永远从商业端思考，而不是从技术端。</p>
-    <p><strong>COO，不是 CTO。</strong>我不关心技术选型是不是最酷的。我关心这个东西能不能赚钱、能不能规模化、能不能让客户少雇两个人。技术是实现手段，商业是出发点。</p>
+    <p><strong>15 年跨境营销。</strong>从 Google Ads 投放到 AI 交付体系搭建，从平台电商到 DTC。运营出身，不懂代码——但这恰好是我的优势：永远从商业端思考，永远先问「这东西怎么赚钱」。</p>
+    <p><strong>现在专注在 AI-Native 和 AI Agent 产品的研究与创新。</strong>不是追热点，是找到 Agent 真正能重构的商业环节，然后把它产品化。</p>
   </div>
 
-  <div class="traits">
-    <div class="trait">
-      <div class="ti">🧠</div>
-      <div class="tt">Strategy-First Builder</div>
-      <div class="td">代码之前先写 BP。市场分析、竞品格局、商业模式——想清楚了再动手。</div>
+  <div class="pillars">
+    <div class="pillar">
+      <div class="pi">📋</div>
+      <div>
+        <div class="pt">Strategy-First</div>
+        <div class="pd">不写没有 BP 的代码。市场分析、竞品格局、商业模式——想清楚了再动手。</div>
+      </div>
     </div>
-    <div class="trait">
-      <div class="ti">💰</div>
-      <div class="tt">Commercial Thinker</div>
-      <div class="td">每个项目从 Day 1 就想清楚怎么赚钱。不追求 stars，追求 revenue。</div>
+    <div class="pillar">
+      <div class="pi">🤖</div>
+      <div>
+        <div class="pt">AI Agent Products</div>
+        <div class="pd">专注 AI-Native 和 Agent 驱动的产品形态。从 VibeCut 到 AIMI，探索 Agent 如何重构商业流程。</div>
+      </div>
     </div>
-    <div class="trait">
-      <div class="ti">✍️</div>
-      <div class="tt">Deep Writer</div>
-      <div class="td">公众号「原点.Lens」。写 AI、商业和未来的深度思考。不追热点，追本质。</div>
+    <div class="pillar">
+      <div class="pi">💰</div>
+      <div>
+        <div class="pt">Commercial by Default</div>
+        <div class="pd">每个项目从 Day 1 就带着商业模式。不追求 stars，追求 sustainable revenue。</div>
+      </div>
+    </div>
+    <div class="pillar">
+      <div class="pi">✍️</div>
+      <div>
+        <div class="pt">Deep Thinker</div>
+        <div class="pd">公众号「原点.Lens」。写 AI、商业和未来的底层逻辑。不追热点，追本质。</div>
+      </div>
     </div>
   </div>
 
   <div class="belief">
     <p>"离钱越近的生意，越不愁没市场。"</p>
-    <div class="by">—— 我的经营信条</div>
   </div>
 
   <div class="links">
