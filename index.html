@@ -23,9 +23,14 @@
   .page {
     position: relative; z-index: 1;
     width: 100%; max-width: 640px; padding: 80px 40px;
-    display: flex; flex-direction: column; gap: 64px;
     margin: 0 auto;
     background: rgba(0,0,0,0.4);
+  }
+  .page-section {
+    margin-bottom: 64px;
+  }
+  .page-section:last-child {
+    margin-bottom: 0;
   }
   .page > * { pointer-events: auto; }
 
@@ -177,8 +182,7 @@
 
 <div class="page">
 
-  <!-- HEADLINE -->
-  <div>
+  <div class="page-section">
     <div class="tag">Focus · AI‑Native &amp; Agent Products</div>
     <div class="headline">
       <span class="hl-glow">I don't just create<br>
@@ -190,8 +194,7 @@
     <div class="subtitle">Business plan before the first commit. Always.</div>
   </div>
 
-  <!-- PIPELINE -->
-  <div>
+  <div class="page-section">
     <div class="pipeline" id="pipeline">
       <div class="step-wrap" data-step="0"><div class="card"><div class="icon">📋</div><div class="name">BP</div></div></div>
       <div class="connector" data-step="0"></div>
@@ -204,13 +207,13 @@
     <div class="pipe-legend">Business Plan → BRD → Research → Code</div>
   </div>
 
-  <!-- STATEMENT -->
-  <div class="statement">
-    <p>Every repo I ship is a complete commercial proposition. Code is just one component.</p>
+  <div class="page-section">
+    <div class="statement">
+      <p>Every repo I ship is a complete commercial proposition. Code is just one component.</p>
+    </div>
   </div>
 
-  <!-- SOCIAL -->
-  <div>
+  <div class="page-section">
     <div class="social-label">Connect</div>
     <div class="social-row">
       <a class="social-link" href="mailto:kiven1026@gmail.com" title="Email">
@@ -243,8 +246,7 @@
     </div>
   </div>
 
-  <!-- BOTTOM -->
-  <div class="bottom-line">
+  <div class="page-section bottom-line">
     <span>KevPH · Beijing</span>
     <span>BP → BRD → R → { }</span>
   </div>
