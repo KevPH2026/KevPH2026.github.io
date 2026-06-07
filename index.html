@@ -3,252 +3,331 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>K · Products, not just code</title>
+<title>K — Products, not code.</title>
 <style>
   :root {
-    --bg: #080c12;
-    --s1: #0f1419;
-    --s2: #161b23;
-    --s3: #1c2230;
+    --bg: #06080c;
     --t1: #e6edf3;
     --t2: #8b949e;
-    --t3: #6e7681;
+    --t3: #484f58;
     --accent: #4da6ff;
-    --green: #3fb950;
     --purple: #a371f7;
-    --r: 12px;
+    --green: #3fb950;
+    --red: #f85149;
+    --amber: #d2991d;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
+
   body {
     background: var(--bg);
     color: var(--t2);
-    font-family: -apple-system, BlinkMacSystemFont, 'Inter', sans-serif;
-    line-height: 1.8;
-    font-size: 15px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'SF Pro Display', sans-serif;
+    line-height: 1.6;
+    overflow-x: hidden;
   }
 
+  /* ── Noise overlay ── */
+  body::after {
+    content: '';
+    position: fixed; inset: 0; z-index: 9999; pointer-events: none; opacity: 0.03;
+    background: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* ── HERO ── */
   .hero {
     min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-    padding: 60px 24px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    position: relative; padding: 60px 24px; text-align: center;
   }
-  .hero::before {
-    content: '';
-    position: absolute;
-    top: -50%; left: -50%;
-    width: 200%; height: 200%;
-    background: radial-gradient(ellipse at 30% 50%, rgba(77,166,255,0.05) 0%, transparent 50%),
-                radial-gradient(ellipse at 70% 30%, rgba(163,113,247,0.04) 0%, transparent 50%);
-    animation: pulse 10s ease-in-out infinite;
+  .hero-bg {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 50% 40%, rgba(77,166,255,0.06) 0%, transparent 60%),
+                radial-gradient(ellipse 40% 50% at 80% 70%, rgba(163,113,247,0.04) 0%, transparent 50%);
   }
-  @keyframes pulse { 0%, 100% { opacity: 0.6; } 50% { opacity: 1; } }
-  .hero-inner { position: relative; z-index: 1; max-width: 700px; }
+
   .hero h1 {
-    font-size: 56px; font-weight: 800; color: var(--t1); letter-spacing: -0.03em; margin-bottom: 20px;
-    line-height: 1.15;
+    font-size: clamp(36px, 8vw, 72px);
+    font-weight: 900; color: var(--t1);
+    letter-spacing: -0.03em; line-height: 1.1;
+    max-width: 800px; position: relative; z-index: 1;
   }
-  .hero h1 span { background: linear-gradient(135deg, var(--accent), var(--purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-  .hero .sub {
-    font-size: 20px; color: var(--t2); font-weight: 500; margin-bottom: 8px;
+  .hero h1 mark {
+    background: linear-gradient(135deg, var(--accent) 0%, var(--purple) 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
   }
-  .hero .focus {
-    display: inline-block;
-    font-size: 13px; color: var(--accent);
-    background: rgba(77,166,255,0.08);
-    border: 1px solid rgba(77,166,255,0.15);
-    border-radius: 20px;
-    padding: 6px 18px;
-    letter-spacing: 0.03em;
-    margin-top: 24px;
+  .hero .punch {
+    font-size: clamp(16px, 3vw, 22px);
+    color: var(--t2); font-weight: 500;
+    margin-top: 16px; position: relative; z-index: 1;
   }
 
-  .section {
-    max-width: 720px;
-    margin: 0 auto;
-    padding: 0 24px 100px;
+  /* ── PIPELINE ── */
+  .pipeline-wrap {
+    position: relative; z-index: 1;
+    margin-top: 64px; width: 100%; max-width: 700px;
   }
-  .section h2 {
-    font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em;
-    color: var(--t3); margin-bottom: 24px; text-align: center;
+  .pipeline {
+    display: flex; align-items: center; justify-content: center;
+    gap: 0; flex-wrap: wrap;
+  }
+  .p-node {
+    display: flex; flex-direction: column; align-items: center;
+    width: 100px; position: relative;
+  }
+  .p-node .icon {
+    width: 56px; height: 56px; border-radius: 16px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; font-weight: 800; letter-spacing: 0.02em;
+    position: relative;
+    transition: transform .3s, box-shadow .3s;
+  }
+  .p-node .icon::after {
+    content: '';
+    position: absolute; inset: -2px; border-radius: 18px;
+    opacity: 0; transition: opacity .4s;
+  }
+  .p-node:hover .icon { transform: scale(1.08); }
+  .p-node .label {
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.06em; margin-top: 10px;
+  }
+  .p-node .sub {
+    font-size: 10px; color: var(--t3); text-transform: uppercase;
+    letter-spacing: 0.04em; margin-top: 2px;
   }
 
-  .diff {
-    background: var(--s1);
-    border: 1px solid var(--s3);
-    border-radius: var(--r);
+  .pn-bp .icon { background: rgba(77,166,255,0.1); color: var(--accent); border: 1px solid rgba(77,166,255,0.2); }
+  .pn-bp .label { color: var(--accent); }
+  .pn-brd .icon { background: rgba(163,113,247,0.1); color: var(--purple); border: 1px solid rgba(163,113,247,0.2); }
+  .pn-brd .label { color: var(--purple); }
+  .pn-research .icon { background: rgba(210,153,29,0.1); color: var(--amber); border: 1px solid rgba(210,153,29,0.2); }
+  .pn-research .label { color: var(--amber); }
+  .pn-code .icon { background: rgba(63,185,80,0.1); color: var(--green); border: 1px solid rgba(63,185,80,0.2); }
+  .pn-code .label { color: var(--green); }
+
+  .p-arrow {
+    font-size: 20px; color: var(--t3); margin: 0 -8px;
+    position: relative; top: -12px;
+  }
+
+  /* ── DIFF SECTION ── */
+  .section { max-width: 840px; margin: 0 auto; padding: 80px 24px; }
+  .diff-box {
+    background: #0d1117;
+    border: 1px solid #21262d;
+    border-radius: 12px;
     overflow: hidden;
-    margin-bottom: 56px;
+    font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+    font-size: 13px; line-height: 1.7;
+    box-shadow: 0 0 60px rgba(77,166,255,0.03);
   }
-  .diff-row {
+  .diff-header {
+    padding: 12px 18px;
+    background: #161b22;
+    border-bottom: 1px solid #21262d;
+    display: flex; gap: 16px;
+    font-size: 12px;
+  }
+  .diff-header span { color: var(--t3); }
+  .diff-header .file-a { color: var(--t2); }
+  .diff-header .file-b { color: var(--t1); font-weight: 600; }
+  .diff-body {
+    padding: 0;
+    max-height: 600px; overflow-y: auto;
+  }
+  .diff-line {
+    display: flex; padding: 0 18px;
+    min-height: 28px; align-items: center;
+  }
+  .diff-line .ln {
+    width: 44px; text-align: right; padding-right: 12px;
+    font-size: 11px; color: var(--t3); flex-shrink: 0; user-select: none;
+  }
+  .diff-line .sign {
+    width: 18px; text-align: center; flex-shrink: 0;
+    font-weight: 700; font-size: 13px;
+  }
+  .diff-add { background: rgba(63,185,80,0.06); }
+  .diff-add .sign { color: var(--green); }
+  .diff-add .ln { color: rgba(63,185,80,0.6); }
+  .diff-del { background: rgba(248,81,73,0.06); }
+  .diff-del .sign { color: var(--red); }
+  .diff-del .ln { color: rgba(248,81,73,0.6); }
+  .diff-ctx { color: var(--t3); }
+  .diff-line .content { flex: 1; }
+  .diff-add .content { color: #7ee787; }
+  .diff-del .content { color: #ffa198; }
+  .diff-ctx .content { color: var(--t3); }
+
+  /* ── QUOTE ── */
+  .quote-section { padding: 80px 24px; text-align: center; position: relative; }
+  .quote-section blockquote {
+    font-size: clamp(20px, 4vw, 32px);
+    font-weight: 700; color: var(--t1);
+    max-width: 600px; margin: 0 auto;
+    line-height: 1.4; letter-spacing: -0.01em;
+    position: relative; z-index: 1;
+  }
+  .quote-section blockquote::before {
+    content: '"';
+    position: absolute; left: -40px; top: -10px;
+    font-size: 80px; color: var(--accent); opacity: 0.15;
+    font-family: Georgia, serif; line-height: 1;
+  }
+  .quote-section .attr {
+    font-size: 13px; color: var(--t3); margin-top: 16px;
+    letter-spacing: 0.04em; text-transform: uppercase;
+  }
+
+  /* ── STATS ── */
+  .stats {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: #21262d;
+    border-radius: 12px; overflow: hidden;
+    max-width: 600px; margin: 0 auto;
   }
-  .diff-col {
-    padding: 32px 28px;
+  .stat {
+    background: #0d1117;
+    padding: 28px 20px; text-align: center;
   }
-  .diff-col:first-child { border-right: 1px solid var(--s3); }
-  .diff-label {
-    font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em;
-    margin-bottom: 16px; font-weight: 700;
+  .stat .num {
+    font-size: 36px; font-weight: 900; color: var(--t1);
+    letter-spacing: -0.02em;
   }
-  .diff-col:first-child .diff-label { color: var(--t3); }
-  .diff-col:last-child .diff-label { color: var(--accent); }
-  .diff-item {
-    font-size: 13px;
-    padding: 6px 0;
-    color: var(--t2);
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    line-height: 1.6;
+  .stat .num span { color: var(--accent); }
+  .stat .lbl {
+    font-size: 11px; color: var(--t3); text-transform: uppercase;
+    letter-spacing: 0.06em; margin-top: 6px;
   }
-  .diff-item .mark { font-size: 11px; flex-shrink: 0; margin-top: 3px; }
-  .diff-col:first-child .mark { color: var(--t3); }
-  .diff-col:last-child .mark { color: var(--accent); }
 
-  .about { text-align: center; }
-  .about p {
-    font-size: 15px; color: var(--t2); margin-bottom: 14px;
-  }
-  .about p strong { color: var(--t1); }
-
-  .pillars { margin-top: 44px; }
-  .pillar {
-    display: flex;
-    align-items: flex-start;
-    gap: 16px;
-    padding: 20px 0;
-    border-bottom: 1px solid rgba(255,255,255,0.04);
-  }
-  .pillar:last-child { border-bottom: none; }
-  .pillar .pi { font-size: 22px; flex-shrink: 0; width: 36px; text-align: center; }
-  .pillar .pt { font-size: 15px; font-weight: 700; color: var(--t1); margin-bottom: 4px; }
-  .pillar .pd { font-size: 13px; color: var(--t3); line-height: 1.6; }
-
-  .belief {
-    background: var(--s1);
-    border: 1px solid var(--s3);
-    border-left: 3px solid var(--accent);
-    border-radius: 0 var(--r) var(--r) 0;
-    padding: 22px 28px;
-    margin-top: 48px;
-    text-align: center;
-  }
-  .belief p { font-size: 18px; font-weight: 600; color: var(--t1); }
-
-  .links {
-    display: flex;
-    justify-content: center;
-    gap: 16px;
-    margin-top: 40px;
-    flex-wrap: wrap;
-  }
-  .links a {
-    color: var(--t2); text-decoration: none; font-size: 13px;
-    padding: 6px 16px;
-    border: 1px solid var(--s3);
-    border-radius: 20px;
-    transition: all .2s;
-  }
-  .links a:hover { color: var(--t1); border-color: var(--accent); }
-
+  /* ── FOOTER ── */
   .footer {
-    text-align: center;
-    padding: 40px 24px;
-    border-top: 1px solid var(--s3);
-    color: var(--t3);
-    font-size: 11px;
+    text-align: center; padding: 48px 24px; border-top: 1px solid #21262d;
   }
+  .footer a {
+    color: var(--t2); text-decoration: none; font-size: 13px;
+    padding: 6px 16px; border: 1px solid #21262d; border-radius: 20px;
+    margin: 0 6px; transition: all .2s; display: inline-block; margin-bottom: 8px;
+  }
+  .footer a:hover { color: var(--t1); border-color: var(--accent); }
+  .footer .sig { font-size: 11px; color: var(--t3); margin-top: 16px; }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .reveal { animation: fadeUp .8s ease-out both; }
+  .reveal:nth-child(2) { animation-delay: .15s; }
+  .reveal:nth-child(3) { animation-delay: .3s; }
 
   @media (max-width: 640px) {
-    .hero h1 { font-size: 36px; }
-    .diff-row { grid-template-columns: 1fr; }
-    .diff-col:first-child { border-right: none; border-bottom: 1px solid var(--s3); }
+    .pipeline { gap: 0; }
+    .p-node { width: 72px; }
+    .p-node .icon { width: 44px; height: 44px; font-size: 13px; border-radius: 12px; }
+    .p-arrow { font-size: 14px; margin: 0 -6px; }
+    .stats { grid-template-columns: 1fr; }
+    .diff-line { font-size: 11px; padding: 0 10px; }
+    .diff-line .ln { width: 30px; padding-right: 6px; }
   }
 </style>
 </head>
 <body>
 
+<!-- ═══ HERO ═══ -->
 <div class="hero">
-  <div class="hero-inner">
-    <h1>I don't just create code.<br>I create <span>products</span> & <span>business models</span>.</h1>
-    <p class="sub">Every repo ships as a complete commercial proposition.</p>
-    <div class="focus">Focused on AI-Native & AI Agent Products</div>
+  <div class="hero-bg"></div>
+  <h1 class="reveal">I ship <mark>products</mark>,<br>not just code.</h1>
+  <p class="punch reveal">Every repo is a complete commercial proposition.</p>
+
+  <div class="pipeline-wrap reveal">
+    <div class="pipeline">
+      <div class="p-node pn-bp">
+        <div class="icon">BP</div>
+        <div class="label">Business Plan</div>
+        <div class="sub">Strategy</div>
+      </div>
+      <div class="p-arrow">→</div>
+      <div class="p-node pn-brd">
+        <div class="icon">BRD</div>
+        <div class="label">Requirements</div>
+        <div class="sub">Spec</div>
+      </div>
+      <div class="p-arrow">→</div>
+      <div class="p-node pn-research">
+        <div class="icon">R</div>
+        <div class="label">Research</div>
+        <div class="sub">Deep Dive</div>
+      </div>
+      <div class="p-arrow">→</div>
+      <div class="p-node pn-code">
+        <div class="icon">{ }</div>
+        <div class="label">Code</div>
+        <div class="sub">Execution</div>
+      </div>
+    </div>
   </div>
 </div>
 
+<!-- ═══ DIFF ═══ -->
 <div class="section">
-  <h2>The Difference</h2>
-  <div class="diff">
-    <div class="diff-row">
-      <div class="diff-col">
-        <div class="diff-label">Typical GitHub Repo</div>
-        <div class="diff-item"><span class="mark">○</span> Code + README. That's it.</div>
-        <div class="diff-item"><span class="mark">○</span> No market context, no business logic</div>
-        <div class="diff-item"><span class="mark">○</span> No explanation of why this exists</div>
-        <div class="diff-item"><span class="mark">○</span> The artifact IS the code</div>
-      </div>
-      <div class="diff-col">
-        <div class="diff-label">My Repos</div>
-        <div class="diff-item"><span class="mark">●</span> Business plan before the first line of code</div>
-        <div class="diff-item"><span class="mark">●</span> Market analysis. User personas. Revenue model.</div>
-        <div class="diff-item"><span class="mark">●</span> Complete product & business model package</div>
-        <div class="diff-item"><span class="mark">●</span> Code is one component. Strategy is the product.</div>
-      </div>
+  <div class="diff-box">
+    <div class="diff-header">
+      <span>Comparing changes</span>
+      <span class="file-a">typical-repo/README.md</span>
+      <span>→</span>
+      <span class="file-b">my-repo/</span>
     </div>
-  </div>
-
-  <h2>Who I Am</h2>
-  <div class="about">
-    <p><strong>15 years in cross-border e-commerce.</strong> From Google Ads to AI-powered delivery systems. From marketplace sellers to DTC brands. Operations background — I don't write code myself, but that's the advantage: I always think from the business side first.</p>
-    <p><strong>Now focused on researching and building AI-Native and AI Agent products.</strong> Not chasing hype — identifying where Agent architecture genuinely reshapes how business gets done, then productizing it.</p>
-  </div>
-
-  <div class="pillars">
-    <div class="pillar">
-      <div class="pi">📋</div>
-      <div>
-        <div class="pt">Strategy-First</div>
-        <div class="pd">Business plan before code. Market analysis, competitive landscape, revenue model — clarity before execution.</div>
-      </div>
+    <div class="diff-body">
+      <div class="diff-line diff-ctx"><span class="ln">1</span><span class="sign"></span><span class="content"># Project Name</span></div>
+      <div class="diff-line diff-ctx"><span class="ln">2</span><span class="sign"></span><span class="content">A thing that does a thing.</span></div>
+      <div class="diff-line diff-ctx"><span class="ln">3</span><span class="sign"></span><span class="content"></span></div>
+      <div class="diff-line diff-ctx"><span class="ln">4</span><span class="sign"></span><span class="content">## Install</span></div>
+      <div class="diff-line diff-del"><span class="ln">5</span><span class="sign">-</span><span class="content">npm install && npm start</span></div>
+      <div class="diff-line diff-del"><span class="ln">6</span><span class="sign">-</span><span class="content"></span></div>
+      <div class="diff-line diff-del"><span class="ln">7</span><span class="sign">-</span><span class="content">That's it. That's the repo.</span></div>
+      <div class="diff-line diff-add"><span class="ln">5</span><span class="sign">+</span><span class="content">📋 BP.md — Business plan. Market size, competitors, revenue model.</span></div>
+      <div class="diff-line diff-add"><span class="ln">6</span><span class="sign">+</span><span class="content">📐 BRD.md — User personas, journey maps, functional spec.</span></div>
+      <div class="diff-line diff-add"><span class="ln">7</span><span class="sign">+</span><span class="content">🔬 RESEARCH.md — 52K LOC deep-dive, architecture analysis, risk assessment.</span></div>
+      <div class="diff-line diff-add"><span class="ln">8</span><span class="sign">+</span><span class="content">💻 src/ — The code. Last. On purpose.</span></div>
+      <div class="diff-line diff-add"><span class="ln">9</span><span class="sign">+</span><span class="content"></span></div>
+      <div class="diff-line diff-add"><span class="ln">10</span><span class="sign">+</span><span class="content">Strategy is the product. Code is execution.</span></div>
     </div>
-    <div class="pillar">
-      <div class="pi">🤖</div>
-      <div>
-        <div class="pt">AI Agent Products</div>
-        <div class="pd">Focused on AI-Native and Agent-driven product forms. From VibeCut to AIMI — exploring how Agents reconstruct business workflows.</div>
-      </div>
-    </div>
-    <div class="pillar">
-      <div class="pi">💰</div>
-      <div>
-        <div class="pt">Commercial by Default</div>
-        <div class="pd">Every project ships with a revenue model from Day 1. Not chasing stars — building sustainable business.</div>
-      </div>
-    </div>
-    <div class="pillar">
-      <div class="pi">✍️</div>
-      <div>
-        <div class="pt">Deep Thinker</div>
-        <div class="pd">Writing on AI, business, and first principles. Not chasing trends — chasing fundamentals.</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="links">
-    <a href="https://github.com/KevPH2026">GitHub</a>
-    <a href="https://kevph2026.github.io/VibeCut/">VibeCut →</a>
-    <a href="mailto:k@superk.ai">Email</a>
   </div>
 </div>
 
+<!-- ═══ STATS ═══ -->
+<div class="section" style="padding-top:0">
+  <div class="stats">
+    <div class="stat">
+      <div class="num"><span>15</span>+</div>
+      <div class="lbl">Years in Cross-Border</div>
+    </div>
+    <div class="stat">
+      <div class="num"><span>4</span>×</div>
+      <div class="lbl">Deliverables per Repo</div>
+    </div>
+    <div class="stat">
+      <div class="num"><span>1</span></div>
+      <div class="lbl">Focus · AI Agent Products</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ QUOTE ═══ -->
+<div class="quote-section">
+  <blockquote>The closer you build to the money, the less you worry about the market.</blockquote>
+  <div class="attr">— My operating principle</div>
+</div>
+
+<!-- ═══ FOOTER ═══ -->
 <div class="footer">
-  <p>KevPH · Beijing</p>
+  <a href="https://github.com/KevPH2026">GitHub</a>
+  <a href="https://kevph2026.github.io/VibeCut/">VibeCut</a>
+  <a href="mailto:k@superk.ai">Email</a>
+  <div class="sig">KevPH · Beijing</div>
 </div>
 
 </body>
