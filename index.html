@@ -7,293 +7,252 @@
 <style>
   :root {
     --bg: #050507;
-    --white: #f0f0f0;
-    --text: #c6c6c8;
-    --node-bg: #4f4d4e;
-    --grid: #404042;
-    --blue-bright: #7798f5;
-    --blue-mid: #6188e3;
+    --blue: #7798f5;
     --blue-dark: #273856;
-    --gray-line: #808080;
+    --gray: #404042;
+    --text: #c6c6c8;
+    --white: #f0f0f0;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   body {
     background: var(--bg);
     color: var(--text);
-    font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', 'Cascadia Code', monospace;
-    overflow: hidden;
+    font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', monospace;
     height: 100vh; width: 100vw;
-    font-size: 10px;
-    line-height: 1.3;
-  }
-
-  /* ── HEADER with diagonal slice ── */
-  .header {
-    position: absolute; top: 0; left: 0; right: 0;
-    height: 11.7vh;
-    background: linear-gradient(180deg, #f0f0f0 0%, #b0b0b0 40%, #606060 100%);
-    clip-path: polygon(0 0, 100% 0, 100% 30%, 28% 100%, 0 100%);
-    display: flex; align-items: center; padding: 0 24px;
-    z-index: 3;
-  }
-  .header .logo {
-    font-family: 'Inter', -apple-system, sans-serif;
-    font-weight: 900; font-size: clamp(14px, 2.5vh, 20px);
-    color: #050507; text-transform: uppercase;
-    letter-spacing: 0.04em;
-  }
-
-  /* ── DIAGONAL TRANSITION ── */
-  .diagonal-zone {
-    position: absolute; top: 11.7vh; left: 0; right: 0;
-    height: 19.9vh;
-    background: linear-gradient(180deg, #606060 0%, #202020 30%, var(--bg) 100%);
-    clip-path: polygon(0 0, 100% 0, 100% 100%, 10% 100%, 0 0);
-    z-index: 2;
-  }
-  .diagonal-zone .scanlines-inner {
-    position: absolute; inset: 0;
-    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.3) 2px, rgba(0,0,0,0.3) 3px);
-    clip-path: inherit;
-    opacity: 0.5;
-  }
-
-  /* ── PIPELINE NODES ── */
-  .pipeline-row {
-    position: absolute; top: 32vh; left: 0; right: 0;
-    height: 17vh; z-index: 4;
-    display: flex; align-items: center;
-    padding: 0 2vw;
-  }
-  .node-group {
-    display: flex; align-items: center; gap: 0;
-    width: 47%;
-  }
-  .node {
-    background: rgba(79,77,78,0.7);
-    border: 1px solid var(--grid);
-    padding: 6px 10px;
-    font-size: clamp(7px, 1.2vh, 10px);
-    color: var(--text);
-    white-space: nowrap;
-    letter-spacing: 0.03em;
-    position: relative;
-    transition: all 0.4s;
-    flex-shrink: 0;
-  }
-  .node .status-dot {
-    display: inline-block; width: 5px; height: 5px;
-    border-radius: 50%; margin-left: 4px;
-    background: #505050;
-  }
-  .node.active {
-    background: rgba(79,77,78,0.95);
-    border-color: #707070;
-    color: #e0e0e0;
-    box-shadow: 0 0 8px rgba(119,152,245,0.3);
-  }
-  .node.active .status-dot { background: var(--blue-bright); box-shadow: 0 0 6px var(--blue-bright); }
-
-  .pipe-arrow {
-    color: #404042;
-    font-size: clamp(8px, 1.3vh, 12px);
-    margin: 0 2px;
-    transition: color 0.4s;
-    flex-shrink: 0;
-  }
-  .pipe-arrow.lit { color: var(--blue-mid); text-shadow: 0 0 6px rgba(97,136,227,0.6); }
-
-  /* ── BLUE TERMINAL ── */
-  .terminal-block {
-    position: absolute;
-    top: 49vh; right: 0;
-    width: 53vw; height: 19vh;
-    background: rgba(39,56,86,0.85);
-    border: 1px solid rgba(97,136,227,0.35);
-    box-shadow: 0 0 25px rgba(119,152,245,0.25), inset 0 0 40px rgba(97,136,227,0.12);
-    padding: 8px 14px;
-    color: var(--blue-bright);
-    font-size: clamp(6px, 1vh, 9px);
-    line-height: 1.5;
     overflow: hidden;
-    z-index: 4;
-    text-shadow: 0 0 5px rgba(119,152,245,0.7);
+    font-size: 14px;
+    line-height: 1.5;
   }
-  .terminal-block .prompt { color: #a0b8f7; }
-  .terminal-block .output { color: #8899cc; margin-left: 12px; }
-  .terminal-block .highlight { color: #c0d0ff; }
-  .terminal-line { white-space: nowrap; }
 
-  /* ── GRID LINES ── */
-  .grid-layer {
-    position: absolute; top: 49vh; left: 0; right: 0; bottom: 13.5vh;
-    z-index: 1; pointer-events: none; overflow: hidden;
+  /* ── SCANLINE OVERLAY ── */
+  body::after {
+    content: '';
+    position: fixed; inset: 0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.15) 2px, rgba(0,0,0,0.15) 3px);
+    pointer-events: none; z-index: 999; opacity: 0.5;
   }
-  .grid-layer svg { width: 100%; height: 100%; }
 
-  /* ── BOTTOM BAR ── */
-  .bottom-bar {
-    position: absolute; bottom: 0; left: 0; right: 0;
-    height: 13.5vh; z-index: 5;
-    border-top: 1px solid #808080;
-    display: flex; align-items: center;
-    padding: 0 24px;
-    font-size: clamp(7px, 1.2vh, 10px);
+  /* ── AMBIENT BLUE GLOW ── */
+  .ambient {
+    position: fixed; pointer-events: none; z-index: 0;
+    width: 50vw; height: 50vw; border-radius: 50%;
+    filter: blur(160px); opacity: 0.06;
+    background: var(--blue);
+  }
+  .ambient.a1 { top: -15vw; right: -10vw; }
+  .ambient.a2 { bottom: -20vw; left: -5vw; opacity: 0.04; width: 40vw; height: 40vw; }
+
+  /* ── GRID ── */
+  .grid-bg {
+    position: fixed; inset: 0; pointer-events: none; z-index: 0; opacity: 0.3;
+    background-image:
+      linear-gradient(rgba(119,152,245,0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(119,152,245,0.06) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+  .grid-bg::after {
+    content: '';
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(135deg, rgba(119,152,245,0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+
+  /* ── MAIN LAYOUT ── */
+  .main {
+    position: relative; z-index: 1;
+    height: 100vh; display: flex; flex-direction: column;
+    justify-content: center;
+    padding: 0 0 0 8vw;
+  }
+
+  /* ── TITLE ── */
+  .title {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-weight: 900; font-size: clamp(48px, 10vw, 96px);
+    line-height: 0.95; letter-spacing: -0.03em;
+    color: var(--white);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    position: relative;
+  }
+  .title .accent {
+    color: var(--blue);
+    text-shadow: 0 0 60px rgba(119,152,245,0.5);
+  }
+  .title::before {
+    content: '';
+    position: absolute; top: -20px; left: -40px;
+    width: 120px; height: 4px;
+    background: var(--blue);
+    box-shadow: 0 0 20px rgba(119,152,245,0.6);
+  }
+
+  /* ── SUBTITLE ── */
+  .subtitle {
+    font-size: clamp(13px, 1.8vw, 16px);
     color: #808080;
-    gap: 16px;
-  }
-  .bottom-bar a {
-    color: #a0a0a0; text-decoration: none;
-    transition: color 0.3s;
-  }
-  .bottom-bar a:hover { color: var(--blue-bright); }
-  .bottom-bar .divider { color: #404042; }
-  .bottom-bar .dot-row {
-    flex: 1; text-align: center;
-    color: #505050; letter-spacing: 2px;
-    font-size: 8px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 48px;
   }
 
-  /* ── GLOBAL SCANLINE ── */
-  .global-scan {
-    position: fixed; inset: 0; z-index: 9997; pointer-events: none; opacity: 0.03;
-    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.5) 2px, rgba(255,255,255,0.5) 3px);
+  /* ── PIPELINE ── */
+  .pipeline {
+    display: flex; align-items: center; gap: 0;
+    margin-bottom: 48px;
+    flex-wrap: wrap;
+  }
+  .p-node {
+    border: 1px solid #333;
+    background: rgba(20,20,22,0.9);
+    padding: 14px 22px;
+    font-size: 15px; font-weight: 600;
+    color: #666;
+    letter-spacing: 0.04em;
+    transition: all 0.5s cubic-bezier(.16,1,.3,1);
+    position: relative;
+  }
+  .p-node .dot {
+    display: inline-block; width: 7px; height: 7px;
+    border-radius: 50%; margin-left: 8px;
+    background: #333;
+    transition: all 0.5s;
+  }
+  .p-arrow {
+    font-size: 20px; color: #333;
+    margin: 0 8px;
+    transition: color 0.5s;
   }
 
-  @media (max-width: 600px) {
-    .node { padding: 3px 5px; font-size: 7px; }
-    .pipe-arrow { font-size: 8px; margin: 0 1px; }
-    .terminal-block { width: 65vw; font-size: 7px; }
-    .pipeline-row { padding: 0 4px; }
+  .p-node.active {
+    border-color: var(--blue);
+    color: #e0e0e0;
+    box-shadow: 0 0 30px rgba(119,152,245,0.25), inset 0 0 20px rgba(119,152,245,0.05);
+  }
+  .p-node.active .dot {
+    background: var(--blue);
+    box-shadow: 0 0 12px rgba(119,152,245,0.8);
+  }
+  .p-arrow.lit { color: var(--blue); text-shadow: 0 0 10px rgba(119,152,245,0.5); }
+
+  /* ── TERMINAL ── */
+  .terminal {
+    background: rgba(39,56,86,0.7);
+    border: 1px solid rgba(119,152,245,0.25);
+    padding: 20px 28px;
+    max-width: 600px;
+    box-shadow: 0 0 40px rgba(119,152,245,0.15), inset 0 0 60px rgba(97,136,227,0.06);
+    color: var(--blue);
+    font-size: 13px;
+    line-height: 1.7;
+    text-shadow: 0 0 6px rgba(119,152,245,0.6);
+    position: relative;
+  }
+  .terminal::before {
+    content: 'TERMINAL';
+    position: absolute; top: -10px; left: 16px;
+    font-size: 10px; letter-spacing: 0.12em;
+    color: rgba(119,152,245,0.4);
+    background: #050507; padding: 0 8px;
+  }
+  .terminal .t-dim { color: #6a7fb8; }
+  .terminal .t-bright { color: #a0c0ff; }
+
+  /* ── BOTTOM ── */
+  .bottom {
+    position: fixed; bottom: 0; left: 0; right: 0; z-index: 10;
+    padding: 16px 8vw;
+    border-top: 1px solid #222;
+    display: flex; gap: 24px;
+    font-size: 11px; color: #555;
+    letter-spacing: 0.08em;
+  }
+  .bottom a {
+    color: #666; text-decoration: none; transition: color .3s;
+  }
+  .bottom a:hover { color: var(--blue); }
+  .bottom .spacer { flex: 1; }
+
+  @media (max-width: 640px) {
+    .main { padding: 0 24px; }
+    .title { font-size: 36px; }
+    .p-node { padding: 10px 14px; font-size: 12px; }
+    .p-arrow { font-size: 14px; margin: 0 4px; }
+    .terminal { max-width: 100%; font-size: 11px; padding: 14px 18px; }
+    .bottom { padding: 12px 24px; gap: 12px; font-size: 10px; }
   }
 </style>
 </head>
 <body>
 
-<div class="global-scan"></div>
+<div class="ambient a1"></div>
+<div class="ambient a2"></div>
+<div class="grid-bg"></div>
 
-<!-- HEADER -->
-<div class="header">
-  <div class="logo">PRODUCTS NOT CODE</div>
-</div>
+<div class="main">
+  <div class="title">PRODUCTS<br><span class="accent">NOT</span> CODE</div>
+  <div class="subtitle">Every repo is a complete commercial proposition</div>
 
-<!-- DIAGONAL TRANSITION -->
-<div class="diagonal-zone">
-  <div class="scanlines-inner"></div>
-</div>
+  <div class="pipeline" id="pipeline">
+    <div class="p-node" data-id="0">BP<span class="dot"></span></div>
+    <span class="p-arrow">→</span>
+    <div class="p-node" data-id="1">BRD<span class="dot"></span></div>
+    <span class="p-arrow">→</span>
+    <div class="p-node" data-id="2">RESEARCH<span class="dot"></span></div>
+    <span class="p-arrow">→</span>
+    <div class="p-node" data-id="3">{ CODE }<span class="dot"></span></div>
+  </div>
 
-<!-- PIPELINE NODES -->
-<div class="pipeline-row" id="pipeline">
-  <div class="node-group">
-    <div class="node" data-id="0">BP<span class="status-dot"></span></div>
-    <span class="pipe-arrow">→</span>
-    <div class="node" data-id="1">BRD<span class="status-dot"></span></div>
-    <span class="pipe-arrow">→</span>
-    <div class="node" data-id="2">R<span class="status-dot"></span></div>
-    <span class="pipe-arrow">→</span>
-    <div class="node" data-id="3">{CODE}<span class="status-dot"></span></div>
-    <span class="pipe-arrow">→</span>
-    <div class="node" data-id="4">DEPLOY<span class="status-dot"></span></div>
+  <div class="terminal" id="terminal">
+    <div><span class="t-dim">$ pipeline status</span></div>
+    <div style="margin-left:16px"><span class="t-bright">BP</span> <span class="t-dim">············</span> READY</div>
+    <div style="margin-left:16px"><span class="t-bright">BRD</span> <span class="t-dim">···········</span> READY</div>
+    <div style="margin-left:16px"><span class="t-bright">RESEARCH</span> <span class="t-dim">······</span> READY</div>
+    <div style="margin-left:16px"><span class="t-bright">CODE</span> <span class="t-dim">·········</span> BUILDING</div>
+    <div style="margin-top:6px"><span class="t-bright">→ I don't just create code.</span></div>
+    <div><span class="t-bright">→ I create products & business models.</span></div>
   </div>
 </div>
 
-<!-- BLUE TERMINAL -->
-<div class="terminal-block" id="terminal">
-  <div class="terminal-line"><span class="prompt">$</span> <span class="output">init pipeline --repo KevPH2026/VibeCut</span></div>
-  <div class="terminal-line"><span class="output">  loading BP.md</span> <span class="highlight">OK</span></div>
-  <div class="terminal-line"><span class="output">  loading BRD.md</span> <span class="highlight">OK</span></div>
-  <div class="terminal-line"><span class="output">  loading RESEARCH.md</span> <span class="highlight">OK</span></div>
-  <div class="terminal-line"><span class="output">  building src/</span> <span class="highlight">...</span></div>
-  <div class="terminal-line"><span class="prompt">$</span> <span class="output">deploy --target production</span></div>
-  <div class="terminal-line"><span class="highlight" style="color:#a0c0ff">✓ Every repo is a complete commercial proposition</span></div>
-  <div class="terminal-line"><span class="highlight" style="color:#b0d0ff">✓ I create products & business models</span></div>
-</div>
-
-<!-- GRID LINES -->
-<div class="grid-layer">
-  <svg viewBox="0 0 1000 400" preserveAspectRatio="none">
-    <defs>
-      <pattern id="diag1" width="60" height="60" patternTransform="rotate(45)" patternUnits="userSpaceOnUse">
-        <line x1="0" y1="0" x2="0" y2="60" stroke="#404042" stroke-width="0.5" opacity="0.4"/>
-      </pattern>
-      <pattern id="diag2" width="100" height="100" patternTransform="rotate(-35)" patternUnits="userSpaceOnUse">
-        <line x1="0" y1="0" x2="0" y2="100" stroke="#404042" stroke-width="0.3" opacity="0.25"/>
-      </pattern>
-    </defs>
-    <rect width="1000" height="400" fill="url(#diag1)"/>
-    <rect width="1000" height="400" fill="url(#diag2)"/>
-    <!-- Node connection lines -->
-    <line x1="50" y1="80" x2="950" y2="80" stroke="#404042" stroke-width="0.5" opacity="0.3"/>
-    <line x1="50" y1="160" x2="950" y2="160" stroke="#404042" stroke-width="0.3" opacity="0.15"/>
-    <line x1="50" y1="240" x2="950" y2="240" stroke="#404042" stroke-width="0.3" opacity="0.1"/>
-  </svg>
-</div>
-
-<!-- BOTTOM BAR -->
-<div class="bottom-bar">
+<div class="bottom">
   <a href="https://github.com/KevPH2026">GITHUB</a>
-  <span class="divider">|</span>
   <a href="https://kevph2026.github.io/VibeCut/">VIBECUT</a>
-  <span class="divider">|</span>
   <a href="mailto:k@superk.ai">EMAIL</a>
-  <span class="dot-row">················································</span>
+  <span class="spacer"></span>
   <span>KEVPH · BEIJING</span>
 </div>
 
 <script>
-// Pipeline animation
-const nodes = document.querySelectorAll('.node');
-const arrows = document.querySelectorAll('.pipe-arrow');
-let activeIdx = -1;
-let dir = 1;
-let pause = false;
+const nodes = document.querySelectorAll('.p-node');
+const arrows = document.querySelectorAll('.p-arrow');
+let idx = -1, dir = 1, pause = false;
 
 function tick() {
   nodes.forEach(n => n.classList.remove('active'));
   arrows.forEach(a => a.classList.remove('lit'));
 
-  if (activeIdx >= 0 && activeIdx < nodes.length) {
-    nodes[activeIdx].classList.add('active');
-    if (activeIdx > 0) arrows[activeIdx - 1].classList.add('lit');
+  if (idx >= 0 && idx < nodes.length) {
+    nodes[idx].classList.add('active');
+    if (idx > 0) arrows[idx - 1].classList.add('lit');
   }
 
-  if (activeIdx === nodes.length - 1 && dir === 1) {
+  if (idx === nodes.length - 1 && dir === 1) {
     pause = true;
-    setTimeout(() => {
-      dir = -1;
-      pause = false;
-      tick();
-    }, 2200);
+    setTimeout(() => { dir = -1; pause = false; tick(); }, 2000);
+    return;
+  }
+  if (idx <= 0 && dir === -1) {
+    dir = 1; idx = -1;
+    setTimeout(tick, 400);
     return;
   }
 
-  if (activeIdx <= 0 && dir === -1) {
-    dir = 1;
-    activeIdx = -1;
-    setTimeout(tick, 500);
-    return;
-  }
-
-  activeIdx += dir;
-  setTimeout(tick, dir === 1 ? 380 : 250);
+  idx += dir;
+  setTimeout(tick, dir === 1 ? 400 : 220);
 }
-
 tick();
-
-// Terminal glitch effect
-const term = document.getElementById('terminal');
-setInterval(() => {
-  const r = Math.random();
-  if (r > 0.92) {
-    term.style.opacity = '0.7';
-    term.style.transform = `translate(${(Math.random()-0.5)*3}px, ${(Math.random()-0.5)*2}px)`;
-    setTimeout(() => {
-      term.style.opacity = '1';
-      term.style.transform = 'none';
-    }, 80);
-  }
-}, 2000);
 </script>
 
 </body>
